@@ -11,7 +11,8 @@ class AppConstants {
   static const String gelImage = 'assets/images/gel.png';
   static const String nailArtImage = 'assets/images/nail_art.png';
   static const String gelExtensionImage = 'assets/images/gel_extension.png';
-  static const String manicureImage = 'assets/images/manicure.png';
+  static const String manicureImage = 'assets/images/dry_manicure_tools.png';
+  static const String studioBannerImage = 'assets/images/studio_banner.png';
 
   // Navigation Links
   static const List<String> navLinks = [

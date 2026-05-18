@@ -24,10 +24,12 @@ class Footer extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: _buildFooterContent(context)
-                  .map((widget) => Padding(
-                        padding: const EdgeInsets.only(bottom: 32),
-                        child: widget,
-                      ))
+                  .map(
+                    (widget) => Padding(
+                      padding: const EdgeInsets.only(bottom: 32),
+                      child: widget,
+                    ),
+                  )
                   .toList(),
             );
           }
@@ -46,12 +48,12 @@ class Footer extends StatelessWidget {
           children: [
             Image.asset(
               AppConstants.logoDarkImage,
-              height: 50,
-              fit: BoxFit.contain,
+              height: 80,
+              fit: BoxFit.fill,
             ),
             const SizedBox(height: 16),
             Text(
-              'Elevating your aura, one nail at a time. The premier luxury nail art studio.',
+              'Precision craftsmanship meets luxury. Specializing in flawless dry manicures, structured gel extensions, and bespoke nail artistry to elevate your aura.',
               style: GoogleFonts.inter(
                 color: AppTheme.white.withOpacity(0.7),
                 fontSize: 14,
@@ -100,9 +102,12 @@ class Footer extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            _buildContactInfo(Icons.location_on, '123 Beauty Ave, Suite 100'),
+            _buildContactInfo(
+              Icons.location_on,
+              'Kulathoor, Thiruvananthapuram,\nKerala 695583',
+            ),
             const SizedBox(height: 8),
-            _buildContactInfo(Icons.phone, '+1 (555) 123-4567'),
+            _buildContactInfo(Icons.phone, '+91 6282596790'),
             const SizedBox(height: 8),
             _buildContactInfo(Icons.email, 'hello@nailaura.com'),
           ],
