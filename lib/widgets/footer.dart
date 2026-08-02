@@ -46,15 +46,25 @@ class Footer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              AppConstants.logoDarkImage,
-              height: 80,
-              fit: BoxFit.fill,
+            Row(
+              children: [
+                Image.asset(
+                  AppConstants.logoIcon,
+                  height: 52,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(width: 14),
+                Image.asset(
+                  AppConstants.logoTextGold,
+                  height: 44,
+                  fit: BoxFit.contain,
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             Text(
               'Precision craftsmanship meets luxury. Specializing in flawless dry manicures, structured gel extensions, and bespoke nail artistry to elevate your aura.',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.montserrat(
                 color: AppTheme.white.withOpacity(0.7),
                 fontSize: 14,
                 height: 1.5,
@@ -72,7 +82,7 @@ class Footer extends StatelessWidget {
           children: [
             Text(
               'Quick Links',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.montserrat(
                 color: AppTheme.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -95,7 +105,7 @@ class Footer extends StatelessWidget {
           children: [
             Text(
               'Contact Us',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.montserrat(
                 color: AppTheme.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -123,7 +133,7 @@ class Footer extends StatelessWidget {
         onTap: () {},
         child: Text(
           text,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.montserrat(
             color: AppTheme.white.withOpacity(0.7),
             fontSize: 14,
           ),
@@ -134,14 +144,17 @@ class Footer extends StatelessWidget {
 
   Widget _buildContactInfo(IconData icon, String text) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, color: AppTheme.primaryGold, size: 16),
         const SizedBox(width: 8),
-        Text(
-          text,
-          style: GoogleFonts.inter(
-            color: AppTheme.white.withOpacity(0.7),
-            fontSize: 14,
+        Expanded(
+          child: Text(
+            text,
+            style: GoogleFonts.montserrat(
+              color: AppTheme.white.withOpacity(0.7),
+              fontSize: 14,
+            ),
           ),
         ),
       ],

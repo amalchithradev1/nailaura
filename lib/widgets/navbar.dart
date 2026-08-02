@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../core/constants.dart';
 import '../core/theme.dart';
 import '../core/utils.dart';
-import '../core/theme.dart';
 
 class NavBar extends StatelessWidget {
   final bool isScrolled;
@@ -26,15 +26,15 @@ class NavBar extends StatelessWidget {
   Widget _buildDesktopNav(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      height: isScrolled ? 60 : 70, // Reduced height and shrink when scrolled
+      height: isScrolled ? 64 : 70,
       padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 0),
       decoration: BoxDecoration(
-        color: isScrolled ? AppTheme.white.withOpacity(0.98) : AppTheme.white,
+        color: isScrolled ? AppTheme.backgroundCream : Colors.transparent,
         boxShadow: isScrolled
             ? [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
+                  color: Colors.black.withOpacity(0.06),
+                  blurRadius: 15,
                   offset: const Offset(0, 4),
                 ),
               ]
@@ -42,56 +42,67 @@ class NavBar extends StatelessWidget {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildLogo(context),
           Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               ...AppConstants.navLinks.map(
                 (link) => Padding(
-                  padding: const EdgeInsets.only(left: 32),
+                  padding: const EdgeInsets.only(left: 22),
                   child: TextButton(
                     onPressed: () {
                       if (onNavTap != null) onNavTap!(link);
                     },
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppTheme.textDark,
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    ),
                     child: Text(
                       link,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         color: AppTheme.textDark,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 13, // Reduced font size
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
                       ),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 32),
+              const SizedBox(width: 26),
               InkWell(
                 onTap: () {
                   Utils.showBookingOptions(context);
                 },
+                borderRadius: BorderRadius.circular(30),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 12),
                   decoration: BoxDecoration(
-                    border: Border.all(color: AppTheme.primaryGold.withOpacity(0.5)),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.phone_in_talk_outlined, color: AppTheme.primaryGold, size: 18),
-                      const SizedBox(width: 8),
-                      Text(
-                        '+91 6282596790',
-                        style: GoogleFonts.inter(
-                          color: AppTheme.textDark,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          letterSpacing: 0.5,
-                        ),
+                    color: AppTheme.buttonDark,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
+                  child: Text(
+                    'Book now',
+                    style: GoogleFonts.montserrat(
+                      color: AppTheme.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
                 ),
-              ),
+              )
+                  .animate(onPlay: (c) => c.repeat(reverse: true))
+                  .scale(begin: const Offset(1.0, 1.0), end: const Offset(1.04, 1.04), duration: 1800.ms),
             ],
           ),
         ],
@@ -102,14 +113,14 @@ class NavBar extends StatelessWidget {
   Widget _buildMobileNav(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      height: isScrolled ? 55 : 65,
+      height: isScrolled ? 60 : 70,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
       decoration: BoxDecoration(
-        color: isScrolled ? AppTheme.white.withOpacity(0.98) : AppTheme.white,
+        color: isScrolled ? AppTheme.backgroundCream : Colors.transparent,
         boxShadow: isScrolled
             ? [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withOpacity(0.06),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -121,9 +132,9 @@ class NavBar extends StatelessWidget {
         children: [
           _buildLogo(context),
           IconButton(
-            icon: const Icon(Icons.menu, color: AppTheme.textDark),
+            icon: const Icon(Icons.menu, color: AppTheme.textDark, size: 28),
             onPressed: () {
-              Scaffold.of(context).openDrawer();
+              Scaffold.of(context).openEndDrawer();
             },
           ),
         ],
@@ -134,12 +145,28 @@ class NavBar extends StatelessWidget {
   Widget _buildLogo(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        width: isScrolled ? 110 : 130, // Shrink logo size when scrolled
-        child: Image.asset(
-          AppConstants.logoImage,
-          fit: BoxFit.contain,
+      child: InkWell(
+        onTap: () {
+          if (onNavTap != null) onNavTap!('Home');
+        },
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              AppConstants.logoIcon,
+              height: isScrolled ? 36 : 42,
+              fit: BoxFit.contain,
+              color: AppTheme.textDark, // Sharp editorial black on sand background
+            ),
+            const SizedBox(width: 12),
+            Image.asset(
+              AppConstants.logoTextGold,
+              height: isScrolled ? 32 : 38,
+              fit: BoxFit.contain,
+              color: AppTheme.textDark, // Sharp editorial black on sand background
+            ),
+          ],
         ),
       ),
     );
@@ -156,6 +183,7 @@ class MobileDrawer extends StatelessWidget {
     switch (link) {
       case 'Home': return Icons.home_outlined;
       case 'Services': return Icons.spa_outlined;
+      case 'About':
       case 'About Us': return Icons.info_outline;
       case 'Contact': return Icons.phone_outlined;
       default: return Icons.circle_outlined;
@@ -173,13 +201,23 @@ class MobileDrawer extends StatelessWidget {
             const SizedBox(height: 40),
             // Header Logo
             Padding(
-              padding: const EdgeInsets.only(left: 40.0),
+              padding: const EdgeInsets.only(left: 32.0),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Image.asset(
-                  AppConstants.logoDarkImage, // Gold/White on dark background
-                  height: 50,
-                  fit: BoxFit.contain,
+                child: Row(
+                  children: [
+                    Image.asset(
+                      AppConstants.logoIcon,
+                      height: 42,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(width: 12),
+                    Image.asset(
+                      AppConstants.logoTextGold,
+                      height: 36,
+                      fit: BoxFit.contain,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -198,18 +236,19 @@ class MobileDrawer extends StatelessWidget {
                         if (onNavTap != null) onNavTap!(link);
                       },
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Icon(_getIconForLink(link), color: AppTheme.primaryGold, size: 28),
-                          const SizedBox(width: 24),
                           Text(
                             link,
-                            style: GoogleFonts.playfairDisplay(
+                            style: GoogleFonts.cormorantGaramond(
                               color: AppTheme.white,
-                              fontSize: 26,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w400,
                               letterSpacing: 1.2,
                             ),
                           ),
+                          const SizedBox(width: 12),
+                          Icon(_getIconForLink(link), color: AppTheme.primaryGold, size: 20),
                         ],
                       ),
                     ),
@@ -241,7 +280,7 @@ class MobileDrawer extends StatelessWidget {
                       ),
                       child: Text(
                         'BOOK APPOINTMENT',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.5,
                         ),

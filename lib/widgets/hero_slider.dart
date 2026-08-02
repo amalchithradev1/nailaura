@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,40 +32,28 @@ class _HeroSliderState extends State<HeroSlider> {
 
   final List<SlideData> slides = [
     SlideData(
-      imagePath: AppConstants.studioBannerImage,
-      title: 'Welcome to Nailaura',
-      subtitle:
-          'Experience luxury and precision craftsmanship at our beautiful new studio.',
-    ),
-    SlideData(
-      imagePath: AppConstants.nailArtImage,
-      title: 'Nail Art',
-      subtitle:
-          'Express your unique style with our intricate, hand-painted minimal designs.',
-    ),
-    SlideData(
       imagePath: AppConstants.gelExtensionImage,
-      title: 'Gel Extension',
+      title: 'Structured Gel Extensions',
       subtitle:
-          'Sculpted to absolute perfection for incredible length and strength.',
+          'Sculpted to flawless symmetry for exceptional length, strength, and elegance.',
     ),
     SlideData(
       imagePath: AppConstants.manicureImage,
-      title: 'Manicure',
+      title: 'Signature Dry Manicure',
       subtitle:
-          'A timeless finish for healthy, naturally glowing nails and pristine cuticles.',
+          'Meticulous cuticle care for clean, naturally radiant nails and lasting perfection.',
     ),
     SlideData(
       imagePath: AppConstants.extensionsImage, // Poly Gel
-      title: 'Poly Gel Extension',
+      title: 'Advanced Poly Gel',
       subtitle:
           'The best of both worlds: lighter than acrylics, stronger than hard gel.',
     ),
     SlideData(
       imagePath: AppConstants.gelImage,
-      title: 'Gel Manicure',
+      title: 'High-Gloss Gel Polish',
       subtitle:
-          'High-shine, chip-free color that protects and lasts for weeks.',
+          'Luminous, chip-resistant color with a mirror finish that endures for weeks.',
     ),
   ];
 
@@ -77,7 +64,7 @@ class _HeroSliderState extends State<HeroSlider> {
   }
 
   void _startAutoSlide() {
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 6), (timer) {
       if (mounted) {
         setState(() {
           if (_currentPage < slides.length - 1) {
@@ -103,11 +90,12 @@ class _HeroSliderState extends State<HeroSlider> {
     final isMobile = screenWidth <= 800;
     final height = isMobile
         ? MediaQuery.of(context).size.height - 70.0
-        : MediaQuery.of(context).size.height - 75.0;
+        : MediaQuery.of(context).size.height - 88.0;
 
-    return SizedBox(
-      height: height,
+    return Container(
+      height: height < 600 ? 600 : height,
       width: double.infinity,
+      color: AppTheme.backgroundCream,
       child: Stack(
         children: [
           Positioned.fill(
@@ -116,44 +104,11 @@ class _HeroSliderState extends State<HeroSlider> {
               transitionBuilder: (Widget child, Animation<double> animation) {
                 return FadeTransition(opacity: animation, child: child);
               },
-              layoutBuilder: (currentChild, previousChildren) {
-                return Stack(
-                  fit: StackFit.expand,
-                  children: <Widget>[
-                    ...previousChildren,
-                    if (currentChild != null) currentChild,
-                  ],
-                );
-              },
               child: _buildSlide(
                 key: ValueKey<int>(_currentPage),
                 slide: slides[_currentPage],
                 isMobile: isMobile,
-                isActive: true,
-              ),
-            ),
-          ),
-          // Page Indicators
-          Positioned(
-            bottom: 32,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                slides.length,
-                (index) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: _currentPage == index ? 24 : 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: _currentPage == index
-                        ? AppTheme.primaryGold
-                        : Colors.white.withOpacity(0.8),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
+                screenWidth: screenWidth,
               ),
             ),
           ),
@@ -166,148 +121,176 @@ class _HeroSliderState extends State<HeroSlider> {
     Key? key,
     required SlideData slide,
     required bool isMobile,
-    required bool isActive,
+    required double screenWidth,
   }) {
-    return Stack(
+    if (isMobile) {
+      return Container(
+        key: key,
+        color: AppTheme.backgroundCream,
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 50),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                slide.title,
+                maxLines: 1,
+                style: GoogleFonts.cormorantGaramond(
+                  color: AppTheme.textDark,
+                  fontSize: 58,
+                  fontWeight: FontWeight.w300,
+                  height: 0.98,
+                  letterSpacing: -1.0,
+                ),
+              ),
+            ).animate().fadeIn(duration: 700.ms).slideY(begin: 0.1, end: 0),
+            const SizedBox(height: 14),
+            Text(
+              slide.subtitle,
+              style: GoogleFonts.montserrat(
+                color: AppTheme.textDark.withOpacity(0.85),
+                fontSize: 15,
+                height: 1.5,
+              ),
+            ).animate().fadeIn(delay: 200.ms, duration: 700.ms),
+            const SizedBox(height: 22),
+            ElevatedButton(
+              onPressed: () {
+                Utils.showBookingOptions(context);
+              },
+              child: Text(
+                'Book now',
+                style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ).animate().fadeIn(delay: 350.ms, duration: 700.ms),
+            const SizedBox(height: 24),
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Image.asset(slide.imagePath, fit: BoxFit.cover)
+                      .animate()
+                      .scale(
+                        begin: const Offset(1.05, 1.05),
+                        end: const Offset(1.0, 1.0),
+                        duration: 8000.ms,
+                      ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Squarespace 7.1 Editorial Desktop Layout (Title overlapping across photo)
+    return Container(
       key: key,
-      fit: StackFit.expand,
-      clipBehavior: Clip
-          .hardEdge, // Prevent scaled image from overflowing the shaded area
-      children: [
-        // Background Image with zooming effect (explicitly clipped to prevent overflow)
-        Positioned.fill(
-          child: ClipRect(
-            child: ImageFiltered(
-              imageFilter: ui.ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
+      color: AppTheme.backgroundCream,
+      child: Stack(
+        children: [
+          // Right Side Photo Box
+          Positioned(
+            right: 64,
+            top: 40,
+            bottom: 60,
+            width: screenWidth * 0.48,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
               child: Image.asset(slide.imagePath, fit: BoxFit.cover)
                   .animate()
                   .scale(
-                    begin: const Offset(1.0, 1.0),
-                    end: const Offset(1.1, 1.1),
-                    duration: 6000.ms,
+                    begin: const Offset(1.08, 1.08),
+                    end: const Offset(1.0, 1.0),
+                    duration: 8000.ms,
+                    curve: Curves.easeOutCubic,
                   ),
             ),
           ),
-        ),
-        // Dark Overlay for readability
-        Positioned.fill(
-          child: Container(
-            color: Colors.black.withOpacity(
-              0.3,
-            ), // Increased opacity to darken image
+          // Left Side Headline (Overlapping onto right image)
+          Positioned(
+            left: 64,
+            top: 110,
+            right: 40, // Allows text to stretch horizontally without wrapping
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                slide.title,
+                maxLines: 1,
+                style: GoogleFonts.cormorantGaramond(
+                  color: AppTheme.textDark,
+                  fontSize: screenWidth > 1400 ? 118 : 98,
+                  fontWeight: FontWeight.w300,
+                  height: 0.94,
+                  letterSpacing: -1.5,
+                ),
+              ),
+            ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.08, end: 0),
           ),
-        ),
-        // Content
-        Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: isMobile ? 24 : 64),
+          // Subtitle & CTA Buttons below headline on the left
+          Positioned(
+            left: 64,
+            bottom: 80,
+            width: 440,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (isActive)
-                  Text(
-                        'ELEVATE YOUR AURA',
-                        style: GoogleFonts.inter(
-                          color: AppTheme.primaryGold,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 4.0,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black.withOpacity(0.5),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
+                Text(
+                      slide.subtitle,
+                      style: GoogleFonts.montserrat(
+                        color: AppTheme.textDark.withOpacity(0.85),
+                        fontSize: 16,
+                        height: 1.6,
+                      ),
+                    )
+                    .animate()
+                    .fadeIn(delay: 200.ms, duration: 800.ms)
+                    .slideY(begin: 0.08, end: 0),
+                const SizedBox(height: 32),
+                Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Utils.showBookingOptions(context);
+                          },
+                          child: Text(
+                            'Book now',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
                             ),
-                          ],
+                          ),
                         ),
-                      )
-                      .animate()
-                      .fadeIn(duration: 800.ms)
-                      .slideX(begin: -0.2, end: 0),
-                const SizedBox(height: 16),
-                if (isActive)
-                  Text(
-                        slide.title,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.playfairDisplay(
-                          color: Colors.white,
-                          fontSize: isMobile ? 48 : 72,
-                          fontWeight: FontWeight.bold,
-                          height: 1.2,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black.withOpacity(0.8),
-                              blurRadius: 16,
-                              offset: const Offset(0, 4),
+                        const SizedBox(width: 16),
+                        OutlinedButton(
+                          onPressed: () {
+                            // Scroll down to services
+                          },
+                          child: Text(
+                            'Explore services',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
                             ),
-                          ],
-                        ),
-                      )
-                      .animate()
-                      .fadeIn(delay: 200.ms, duration: 800.ms)
-                      .slideX(begin: 0.2, end: 0),
-                const SizedBox(height: 24),
-                if (isActive)
-                  SizedBox(
-                        width: isMobile ? double.infinity : 600,
-                        child: Text(
-                          slide.subtitle,
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.inter(
-                            color: Colors.white.withOpacity(0.95),
-                            fontSize: isMobile ? 16 : 20,
-                            height: 1.5,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black.withOpacity(0.8),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
                           ),
                         ),
-                      )
-                      .animate()
-                      .fadeIn(delay: 400.ms, duration: 800.ms)
-                      .slideX(begin: -0.2, end: 0),
-                const SizedBox(height: 48),
-                if (isActive)
-                  ElevatedButton(
-                        onPressed: () {
-                          Utils.showBookingOptions(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryGold.withOpacity(
-                            0.9,
-                          ),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 48,
-                            vertical: 22,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          elevation: 15,
-                          shadowColor: AppTheme.primaryGold.withOpacity(0.4),
-                        ),
-                        child: Text(
-                          'BOOK APPOINTMENT',
-                          style: GoogleFonts.inter(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 2.0,
-                          ),
-                        ),
-                      )
-                      .animate()
-                      .fadeIn(delay: 600.ms, duration: 600.ms)
-                      .scale(begin: const Offset(0.9, 0.9)),
+                      ],
+                    )
+                    .animate()
+                    .fadeIn(delay: 400.ms, duration: 800.ms)
+                    .slideY(begin: 0.08, end: 0),
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

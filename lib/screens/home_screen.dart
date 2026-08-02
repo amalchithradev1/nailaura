@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -51,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 'Home':
         key = _homeKey;
         break;
+      case 'About':
       case 'About Us':
         key = _aboutKey;
         break;
@@ -91,18 +91,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     SizedBox(
                       key: _homeKey,
-                      height: MediaQuery.of(context).size.width > 800 ? 75 : 70,
+                      height: MediaQuery.of(context).size.width > 800 ? 70 : 60,
                     ),
                     Container(child: const HeroSlider()),
-                    Container(
-                      key: _aboutKey,
-                      child: _buildWelcomeSection(context),
-                    ),
                     Container(
                       key: _servicesKey,
                       child: _buildServicesSection(context),
                     ),
-                    _buildWhyChooseUs(context),
+                    Container(
+                      key: _aboutKey,
+                      child: _buildWhyChooseUs(context),
+                    ),
                     _buildGalleryPlaceholder(context),
                     Container(key: _contactKey, child: const Footer()),
                   ],
@@ -121,104 +120,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildWelcomeSection(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth <= 800;
-
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 24 : 64,
-        vertical: 100,
-      ),
-      color: AppTheme.white,
-      child: isMobile
-          ? Column(
-              children: [
-                _buildWelcomeText(context, isMobile),
-                const SizedBox(height: 48),
-                _buildWelcomeImage(),
-              ],
-            )
-          : Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(child: _buildWelcomeText(context, isMobile)),
-                const SizedBox(width: 80),
-                Expanded(child: _buildWelcomeImage()),
-              ],
-            ),
-    );
-  }
-
-  Widget _buildWelcomeText(BuildContext context, bool isMobile) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'WELCOME TO NAILAURA',
-          style: GoogleFonts.inter(
-            color: AppTheme.primaryGold,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 2.0,
-          ),
-        ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.1),
-        const SizedBox(height: 16),
-        Text(
-          'A Sanctuary for Your Hands & Feet',
-          style: GoogleFonts.playfairDisplay(
-            color: AppTheme.textDark,
-            fontSize: isMobile ? 36 : 48,
-            fontWeight: FontWeight.bold,
-            height: 1.2,
-          ),
-        ).animate().fadeIn(delay: 200.ms).slideX(begin: -0.1),
-        const SizedBox(height: 24),
-        Text(
-          "Welcome to Nailaura, your upcoming destination for premium nail artistry! Opening our doors next month, we can't wait to pamper you in our luxurious, comforting studio. With a curated menu of flawless dry manicures, durable gel extensions, and bespoke nail art, our services are brought to life by a passionate technical team with over 5 years of expert experience. We focus on meticulous attention to detail, high-end international products, and warm hospitality to ensure you leave with a beautiful smile after every single visit.",
-          style: GoogleFonts.inter(
-            color: AppTheme.textDark.withOpacity(0.8),
-            fontSize: 16,
-            height: 1.8,
-          ),
-        ).animate().fadeIn(delay: 400.ms).slideX(begin: -0.1),
-        const SizedBox(height: 40),
-        OutlinedButton(
-          onPressed: () {},
-          style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-          ),
-          child: Text(
-            'Read Our Story',
-            style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        ).animate().fadeIn(delay: 600.ms),
-      ],
-    );
-  }
-
-  Widget _buildWelcomeImage() {
-    return Container(
-      height: 500,
-      decoration: BoxDecoration(
-        color: AppTheme.backgroundCream,
-        borderRadius: BorderRadius.circular(20),
-        image: const DecorationImage(
-          image: AssetImage(AppConstants.polishImage),
-          fit: BoxFit.cover,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 30,
-            offset: const Offset(0, 15),
-          ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 800.ms).scale(begin: const Offset(0.95, 0.95));
-  }
-
   Widget _buildServicesSection(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth <= 800;
@@ -231,27 +132,17 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       color: AppTheme.backgroundCream,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'OUR SERVICES',
-            style: GoogleFonts.inter(
-              color: AppTheme.primaryGold,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2.0,
-            ),
-          ).animate().fadeIn().slideY(begin: 0.2),
-          const SizedBox(height: 16),
-          Text(
             'Signature Treatments',
-            style: GoogleFonts.playfairDisplay(
+            style: GoogleFonts.cormorantGaramond(
               color: AppTheme.textDark,
-              fontSize: isMobile ? 36 : 48,
-              fontWeight: FontWeight.bold,
+              fontSize: isMobile ? 38 : 52,
+              fontWeight: FontWeight.w400,
             ),
-          ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2),
-          const SizedBox(height: 64),
+          ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.2),
+          const SizedBox(height: 56),
           Builder(
             builder: (context) {
               double desktopCardWidth =
@@ -261,11 +152,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? double.infinity
                   : desktopCardWidth;
 
-              Widget buildCard(String title, String desc, String img) {
+              Widget buildCard(
+                  String title, String price, String desc, String img) {
                 return SizedBox(
                   width: cardWidth,
                   child: HoverServiceCard(
                     title: title,
+                    price: price,
                     description: desc,
                     imagePath: img,
                   ),
@@ -274,33 +167,44 @@ class _HomeScreenState extends State<HomeScreen> {
 
               return Wrap(
                 spacing: 32,
-                runSpacing: 40,
-                alignment: WrapAlignment.center,
+                runSpacing: 48,
+                alignment: WrapAlignment.start,
                 children: [
                   buildCard(
                     'Nail Art',
+                    '\$45.00',
                     'Express your unique style with intricate, hand-painted minimal designs.',
                     AppConstants.nailArtImage,
                   ),
                   buildCard(
-                    'Gel Polish',
-                    'High-shine, long-lasting protective color for weeks.',
-                    AppConstants.gelImage,
+                    'Dry Manicure',
+                    '\$50.00',
+                    'A timeless finish for healthy, naturally glowing nails and pristine cuticles.',
+                    AppConstants.manicureImage,
+                  ),
+                  buildCard(
+                    'Gap Filling',
+                    '\$40.00',
+                    'Precision acrylic and gel maintenance to restore strength, structure, and flawless look.',
+                    AppConstants.gapFillingImage,
+                  ),
+                  buildCard(
+                    'Nail Strengthening',
+                    '\$35.00',
+                    'Intensive keratin and botanical infusion to restore damaged, brittle nails to full health.',
+                    AppConstants.strengtheningImage,
                   ),
                   buildCard(
                     'Soft Gel Extension',
-                    'Sculpted to absolute perfection for incredible length.',
-                    AppConstants.gelExtensionImage,
+                    '\$75.00',
+                    'Sculpted to absolute perfection with lightweight, natural-looking gel for incredible length.',
+                    AppConstants.cuticleCareImage,
                   ),
                   buildCard(
                     'Poly Gel Extension',
-                    'The best of both worlds: lighter than acrylics, stronger than hard gel.',
-                    AppConstants.extensionsImage,
-                  ),
-                  buildCard(
-                    'Dry Manicure',
-                    'A timeless finish for healthy, naturally glowing nails and pristine cuticles.',
-                    AppConstants.manicureImage,
+                    '\$85.00',
+                    'The best of both worlds: lighter than acrylics, stronger than hard gel for flawless structure.',
+                    AppConstants.gelExtensionImage,
                   ),
                 ],
               );
@@ -318,56 +222,121 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 24 : 64,
+        horizontal: isMobile ? 24 : 80,
         vertical: 100,
       ),
-      color: AppTheme.white,
+      color: const Color(0xFFF7F4EE),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'THE EXPERIENCE',
-            style: GoogleFonts.inter(
-              color: AppTheme.primaryGold,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2.0,
-            ),
+          isMobile
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'THE EXPERIENCE',
+                      style: GoogleFonts.montserrat(
+                        color: AppTheme.primaryGold,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 3.0,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Why Choose Nailaura',
+                      style: GoogleFonts.cormorantGaramond(
+                        color: AppTheme.textDark,
+                        fontSize: 40,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Our studio combines luxury, hygiene, and art. We use industry-leading, non-toxic products to ensure your nails remain healthy, vibrant, and flawlessly styled.',
+                      style: GoogleFonts.montserrat(
+                        color: AppTheme.textDark.withOpacity(0.75),
+                        fontSize: 14,
+                        height: 1.6,
+                      ),
+                    ),
+                  ],
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'THE EXPERIENCE',
+                          style: GoogleFonts.montserrat(
+                            color: AppTheme.primaryGold,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 3.0,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Why Choose Nailaura',
+                          style: GoogleFonts.cormorantGaramond(
+                            color: AppTheme.textDark,
+                            fontSize: 52,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      width: 420,
+                      child: Text(
+                        'Our studio combines luxury, hygiene, and art. We use industry-leading, non-toxic products to ensure your nails remain healthy, vibrant, and flawlessly styled.',
+                        style: GoogleFonts.montserrat(
+                          color: AppTheme.textDark.withOpacity(0.75),
+                          fontSize: 14,
+                          height: 1.6,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+          const SizedBox(height: 36),
+          Container(
+            height: 1,
+            width: double.infinity,
+            color: AppTheme.primaryGold.withOpacity(0.3),
           ),
-          const SizedBox(height: 16),
-          Text(
-            'Why Choose Nailaura',
-            style: GoogleFonts.playfairDisplay(
-              color: AppTheme.textDark,
-              fontSize: isMobile ? 36 : 48,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 64),
+          const SizedBox(height: 50),
           Wrap(
-            spacing: 40,
-            runSpacing: 40,
-            alignment: WrapAlignment.center,
+            spacing: 32,
+            runSpacing: 32,
+            alignment: WrapAlignment.start,
             children: [
               HoverFeatureItem(
+                number: '01',
                 title: 'Premium Products',
                 icon: Icons.diamond_outlined,
                 desc:
                     'We use industry-leading, non-toxic products to ensure healthy, vibrant nails.',
               ),
               HoverFeatureItem(
+                number: '02',
                 title: 'Expert Artists',
                 icon: Icons.brush_outlined,
                 desc:
                     'Our licensed technicians are trained in the latest nail art techniques.',
               ),
               HoverFeatureItem(
+                number: '03',
                 title: 'Ultimate Hygiene',
                 icon: Icons.clean_hands_outlined,
                 desc:
                     'Strict sterilization protocols for a safe, worry-free pampering session.',
               ),
               HoverFeatureItem(
+                number: '04',
                 title: 'Relaxing Vibe',
                 icon: Icons.spa_outlined,
                 desc:
@@ -389,11 +358,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class HoverServiceCard extends StatefulWidget {
   final String title;
+  final String price;
   final String description;
   final String imagePath;
   const HoverServiceCard({
     Key? key,
     required this.title,
+    required this.price,
     required this.description,
     required this.imagePath,
   }) : super(key: key);
@@ -413,110 +384,79 @@ class _HoverServiceCardState extends State<HoverServiceCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
-        transform: Matrix4.identity()..translate(0.0, _isHovered ? -10.0 : 0.0),
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(_isHovered ? 0.15 : 0.05),
-              blurRadius: _isHovered ? 32 : 24,
-              offset: Offset(0, _isHovered ? 12 : 8),
-            ),
-          ],
-        ),
-        child: Stack(
+        transform: Matrix4.identity()..translate(0.0, _isHovered ? -6.0 : 0.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 1. Photo (Clean rectangle with hover zoom)
             ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: AnimatedScale(
-                scale: _isHovered ? 1.05 : 1.0,
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.easeOut,
-                child: Image.asset(
-                  widget.imagePath,
-                  height: 400,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+              borderRadius: BorderRadius.circular(4),
+              child: AspectRatio(
+                aspectRatio: 0.95,
+                child: AnimatedScale(
+                  scale: _isHovered ? 1.05 : 1.0,
+                  duration: const Duration(milliseconds: 600),
+                  curve: Curves.easeOutCubic,
+                  child: Image.asset(
+                    widget.imagePath,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  bottom: Radius.circular(16),
+            const SizedBox(height: 20),
+            // 2. Service Title
+            Text(
+              widget.title,
+              style: GoogleFonts.cormorantGaramond(
+                color: AppTheme.textDark,
+                fontSize: 26,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            const SizedBox(height: 4),
+            // 3. Price Tag
+            Text(
+              widget.price,
+              style: GoogleFonts.montserrat(
+                color: AppTheme.textDark.withOpacity(0.75),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 14),
+            // 4. Description
+            Text(
+              widget.description,
+              style: GoogleFonts.montserrat(
+                color: AppTheme.textDark.withOpacity(0.85),
+                fontSize: 14,
+                height: 1.6,
+              ),
+            ),
+            const SizedBox(height: 24),
+            // 5. Full-Width Solid Black Pill Button
+            InkWell(
+              onTap: () {
+                Utils.showBookingOptions(context);
+              },
+              borderRadius: BorderRadius.circular(30),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  color: _isHovered ? AppTheme.primaryGold : AppTheme.textDark,
+                  borderRadius: BorderRadius.circular(30),
                 ),
-                child: BackdropFilter(
-                  filter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                  child: Container(
-                    padding: const EdgeInsets.all(24.0),
-                    decoration: BoxDecoration(
-                      color: AppTheme.white.withOpacity(0.85),
-                      border: Border(
-                        top: BorderSide(color: Colors.white.withOpacity(0.5)),
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                widget.title,
-                                style: GoogleFonts.playfairDisplay(
-                                  color: AppTheme.textDark,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          widget.description,
-                          style: GoogleFonts.inter(
-                            color: AppTheme.textDark.withOpacity(0.8),
-                            fontSize: 14,
-                            height: 1.5,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        InkWell(
-                          onTap: () {
-                            Utils.showBookingOptions(context);
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                'Book Now',
-                                style: GoogleFonts.inter(
-                                  color: AppTheme.primaryGold,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                transform: Matrix4.identity()
-                                  ..translate(_isHovered ? 5.0 : 0.0, 0.0),
-                                child: const Icon(
-                                  Icons.arrow_forward,
-                                  color: AppTheme.primaryGold,
-                                  size: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                alignment: Alignment.center,
+                child: Text(
+                  'Book appointment',
+                  style: GoogleFonts.montserrat(
+                    color: _isHovered ? AppTheme.textDark : AppTheme.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    letterSpacing: 0.5,
                   ),
                 ),
               ),
@@ -529,11 +469,13 @@ class _HoverServiceCardState extends State<HoverServiceCard> {
 }
 
 class HoverFeatureItem extends StatefulWidget {
+  final String number;
   final String title;
   final IconData icon;
   final String desc;
   const HoverFeatureItem({
     Key? key,
+    required this.number,
     required this.title,
     required this.icon,
     required this.desc,
@@ -553,68 +495,101 @@ class _HoverFeatureItemState extends State<HoverFeatureItem> {
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        width: 250,
-        padding: const EdgeInsets.all(24),
+        width: 270,
+        padding: const EdgeInsets.all(28),
         decoration: BoxDecoration(
-          color: _isHovered ? AppTheme.white : AppTheme.backgroundCream,
-          borderRadius: BorderRadius.circular(16),
+          color: _isHovered ? const Color(0xFF161514) : const Color(0xFFFFFFFF),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: _isHovered
+                ? AppTheme.primaryGold
+                : AppTheme.primaryGold.withOpacity(0.25),
+            width: 1,
+          ),
           boxShadow: _isHovered
               ? [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
+                    color: AppTheme.primaryGold.withOpacity(0.12),
+                    blurRadius: 24,
+                    offset: const Offset(0, 12),
                   ),
                 ]
-              : [],
-        ),
-        child: Column(
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: _isHovered ? AppTheme.primaryGold : AppTheme.white,
-                shape: BoxShape.circle,
-                boxShadow: [
+              : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
                   ),
                 ],
-              ),
-              child: AnimatedRotation(
-                turns: _isHovered ? 0.05 : 0,
-                duration: const Duration(milliseconds: 300),
-                child: Icon(
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(
                   widget.icon,
-                  color: _isHovered ? AppTheme.white : AppTheme.primaryGold,
-                  size: 32,
+                  color: AppTheme.primaryGold,
+                  size: 28,
                 ),
-              ),
+                Text(
+                  widget.number,
+                  style: GoogleFonts.cormorantGaramond(
+                    color: AppTheme.primaryGold,
+                    fontSize: 24,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 28),
             Text(
               widget.title,
-              style: GoogleFonts.inter(
-                color: AppTheme.textDark,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+              style: GoogleFonts.cormorantGaramond(
+                color: _isHovered ? AppTheme.white : AppTheme.textDark,
+                fontWeight: FontWeight.w600,
+                fontSize: 26,
               ),
             ),
             const SizedBox(height: 12),
             Text(
               widget.desc,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                color: AppTheme.textDark.withOpacity(0.7),
-                fontSize: 14,
-                height: 1.5,
+              style: GoogleFonts.montserrat(
+                color: _isHovered
+                    ? AppTheme.white.withOpacity(0.8)
+                    : AppTheme.textDark.withOpacity(0.75),
+                fontSize: 13.5,
+                height: 1.6,
+              ),
+            ),
+            const SizedBox(height: 28),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              child: Row(
+                children: [
+                  Container(
+                    width: _isHovered ? 24 : 16,
+                    height: 1,
+                    color: AppTheme.primaryGold,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Discover',
+                    style: GoogleFonts.montserrat(
+                      color: AppTheme.primaryGold,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
-      ).animate().fadeIn().scale(begin: const Offset(0.9, 0.9)),
+      ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1),
     );
   }
 }
@@ -668,31 +643,39 @@ class _MarqueeGalleryState extends State<MarqueeGallery> {
 
     // Use multiple images to create a long scrolling list
     final List<String> images = [
-      AppConstants.nailArtImage,
       AppConstants.gelExtensionImage,
       AppConstants.manicureImage,
-      AppConstants.polishImage,
       AppConstants.gelImage,
       AppConstants.extensionsImage,
     ];
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 80),
-      color: AppTheme.white,
+      padding: const EdgeInsets.symmetric(vertical: 100),
+      color: const Color(0xFF161514),
       child: Column(
         children: [
           Text(
-            'Follow Us @nailaura',
-            style: GoogleFonts.playfairDisplay(
-              color: AppTheme.textDark,
-              fontSize: isMobile ? 28 : 36,
-              fontWeight: FontWeight.bold,
+            'INSTAGRAM PORTFOLIO',
+            style: GoogleFonts.montserrat(
+              color: AppTheme.primaryGold,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 3.0,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Follow Us @nailauraofficial_',
+            style: GoogleFonts.cormorantGaramond(
+              color: AppTheme.white,
+              fontSize: isMobile ? 36 : 48,
+              fontWeight: FontWeight.w400,
             ),
           ),
           const SizedBox(height: 48),
           SizedBox(
-            height: 350,
+            height: 360,
             child: ListView.builder(
               controller: _scrollController,
               scrollDirection: Axis.horizontal,
@@ -703,17 +686,21 @@ class _MarqueeGalleryState extends State<MarqueeGallery> {
               itemBuilder: (context, index) {
                 final imagePath = images[index % images.length];
                 return Container(
-                  width: 300,
+                  width: 280,
                   margin: const EdgeInsets.only(right: 24, left: 0),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppTheme.primaryGold.withOpacity(0.3),
+                      width: 1,
+                    ),
                     image: DecorationImage(
                       image: AssetImage(imagePath),
                       fit: BoxFit.cover,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withOpacity(0.4),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),

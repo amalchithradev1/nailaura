@@ -14,74 +14,128 @@ class Utils {
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
           elevation: 0,
           backgroundColor: Colors.transparent,
           child: Container(
-            padding: const EdgeInsets.all(32),
+            width: 480,
+            padding: const EdgeInsets.all(36),
             decoration: BoxDecoration(
-              color: AppTheme.white,
-              borderRadius: BorderRadius.circular(16),
+              color: const Color(0xFF161514), // Deep luxury charcoal
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AppTheme.primaryGold.withOpacity(0.4),
+                width: 1,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
+                  color: Colors.black.withOpacity(0.5),
+                  blurRadius: 40,
+                  offset: const Offset(0, 20),
                 ),
               ],
             ),
-            width: 400,
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Top header row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'NAILAURA CONCIERGE',
+                      style: GoogleFonts.montserrat(
+                        color: AppTheme.primaryGold,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 3.0,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () => Navigator.pop(context),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.08),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.close,
+                          size: 18,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
                 Text(
-                  'BOOK AN APPOINTMENT',
-                  style: GoogleFonts.inter(
-                    color: AppTheme.primaryGold,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2.0,
+                  'Reserve Your Visit',
+                  style: GoogleFonts.cormorantGaramond(
+                    color: AppTheme.white,
+                    fontSize: 38,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 Text(
-                  'How would you like to book?',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.playfairDisplay(
-                    color: AppTheme.textDark,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
+                  'Select your preferred booking channel to connect personally with our studio reception.',
+                  style: GoogleFonts.montserrat(
+                    color: AppTheme.white.withOpacity(0.75),
+                    fontSize: 13,
+                    height: 1.5,
                   ),
                 ),
-                const SizedBox(height: 32),
-                _buildContactOption(
+                const SizedBox(height: 18),
+                Container(
+                  height: 1,
+                  width: 48,
+                  color: AppTheme.primaryGold,
+                ),
+                const SizedBox(height: 28),
+                _LuxuryBookingOptionCard(
                   icon: Icons.chat_bubble_outline,
-                  title: 'WhatsApp Message',
-                  subtitle: 'Fastest response time',
+                  title: 'WhatsApp Concierge',
+                  subtitle: 'Fastest response · Instant chat with reception',
+                  badgeText: 'INSTANT',
                   onTap: () {
                     Navigator.pop(context);
                     _launchWhatsApp();
                   },
                 ),
-                const SizedBox(height: 16),
-                _buildContactOption(
+                const SizedBox(height: 14),
+                _LuxuryBookingOptionCard(
                   icon: Icons.phone_outlined,
-                  title: 'Call Us Directly',
-                  subtitle: 'Speak with our reception',
+                  title: 'Call Studio Directly',
+                  subtitle: '+91 6282 596790 · Speak with our team',
+                  badgeText: 'DIRECT',
                   onTap: () {
                     Navigator.pop(context);
                     _launchPhone();
                   },
                 ),
+                const SizedBox(height: 14),
+                _LuxuryBookingOptionCard(
+                  icon: Icons.mail_outline,
+                  title: 'Send an Email Note',
+                  subtitle: 'For bridal, events & bespoke nail art inquiries',
+                  badgeText: 'INQUIRE',
+                  onTap: () {
+                    Navigator.pop(context);
+                    _launchEmail();
+                  },
+                ),
                 const SizedBox(height: 32),
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
+                Center(
                   child: Text(
-                    'Cancel',
-                    style: GoogleFonts.inter(
-                      color: AppTheme.textDark.withOpacity(0.5),
-                      fontWeight: FontWeight.w600,
+                    'STUDIO HOURS: TUESDAY – SUNDAY · 10:00 AM – 7:00 PM',
+                    style: GoogleFonts.montserrat(
+                      color: AppTheme.white.withOpacity(0.35),
+                      fontSize: 10,
+                      letterSpacing: 1.0,
                     ),
                   ),
                 ),
@@ -93,67 +147,12 @@ class Utils {
     );
   }
 
-  static Widget _buildContactOption({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          border: Border.all(color: AppTheme.primaryGold.withOpacity(0.3)),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppTheme.backgroundCream,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: AppTheme.primaryGold),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.inter(
-                      color: AppTheme.textDark,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: GoogleFonts.inter(
-                      color: AppTheme.textDark.withOpacity(0.6),
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(Icons.arrow_forward_ios, size: 14, color: AppTheme.primaryGold),
-          ],
-        ),
-      ),
-    );
-  }
-
   // --- URL Launchers ---
 
   static Future<void> _launchWhatsApp() async {
     final message = Uri.encodeComponent("Hi Nailaura! I would like to book an appointment.");
-    final url = Uri.parse('https://wa.me/$studioPhone?text=$message');
+    final cleanPhone = studioPhone.replaceAll(RegExp(r'\D'), '');
+    final url = Uri.parse('https://wa.me/$cleanPhone?text=$message');
     if (await canLaunchUrl(url)) {
       await launchUrl(url);
     } else {
@@ -177,5 +176,129 @@ class Utils {
     } else {
       debugPrint("Could not launch email client");
     }
+  }
+}
+
+class _LuxuryBookingOptionCard extends StatefulWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String badgeText;
+  final VoidCallback onTap;
+
+  const _LuxuryBookingOptionCard({
+    Key? key,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.badgeText,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  State<_LuxuryBookingOptionCard> createState() =>
+      _LuxuryBookingOptionCardState();
+}
+
+class _LuxuryBookingOptionCardState extends State<_LuxuryBookingOptionCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: InkWell(
+        onTap: widget.onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          decoration: BoxDecoration(
+            color: _isHovered
+                ? AppTheme.primaryGold
+                : const Color(0xFF22201E),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: _isHovered
+                  ? AppTheme.primaryGold
+                  : AppTheme.primaryGold.withOpacity(0.25),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: _isHovered
+                      ? const Color(0xFF161514)
+                      : AppTheme.primaryGold.withOpacity(0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  widget.icon,
+                  color: _isHovered ? AppTheme.white : AppTheme.primaryGold,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 18),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.title,
+                      style: GoogleFonts.cormorantGaramond(
+                        color: _isHovered
+                            ? const Color(0xFF161514)
+                            : AppTheme.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      widget.subtitle,
+                      style: GoogleFonts.montserrat(
+                        color: _isHovered
+                            ? const Color(0xFF161514).withOpacity(0.85)
+                            : AppTheme.white.withOpacity(0.65),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: _isHovered
+                      ? const Color(0xFF161514)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: _isHovered
+                        ? Colors.transparent
+                        : AppTheme.primaryGold.withOpacity(0.4),
+                  ),
+                ),
+                child: Text(
+                  widget.badgeText,
+                  style: GoogleFonts.montserrat(
+                    color: _isHovered ? AppTheme.white : AppTheme.primaryGold,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
