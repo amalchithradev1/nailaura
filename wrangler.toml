@@ -1,2 +1,5 @@
 name = "nailaura"
-pages_build_output_dir = "build/web"
+compatibility_date = "2026-08-01"
+
+[assets]
+directory = "build/web"
