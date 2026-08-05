@@ -5,7 +5,7 @@ import 'theme.dart';
 
 class Utils {
   // Contact Details
-  static const String studioPhone = '+916282596790'; // Assuming +91 for WhatsApp to work correctly
+  static const String studioPhone = '+918281791180'; // Assuming +91 for WhatsApp to work correctly
   static const String studioEmail = 'aswathyprasad6790@gmail.com';
 
   static void showBookingOptions(BuildContext context) {
@@ -110,7 +110,7 @@ class Utils {
                 _LuxuryBookingOptionCard(
                   icon: Icons.phone_outlined,
                   title: 'Call Studio Directly',
-                  subtitle: '+91 6282 596790 · Speak with our team',
+                  subtitle: '+91 8281 791180 · Speak with our team',
                   badgeText: 'DIRECT',
                   onTap: () {
                     Navigator.pop(context);

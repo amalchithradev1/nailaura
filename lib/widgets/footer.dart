@@ -117,7 +117,7 @@ class Footer extends StatelessWidget {
               'Kulathoor, Thiruvananthapuram,\nKerala 695583',
             ),
             const SizedBox(height: 8),
-            _buildContactInfo(Icons.phone, '+91 6282596790'),
+            _buildContactInfo(Icons.phone, '+91 8281791180'),
             const SizedBox(height: 8),
             _buildContactInfo(Icons.email, 'hello@nailaura.com'),
           ],
