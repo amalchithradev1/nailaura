@@ -89,11 +89,13 @@ class _HeroSliderState extends State<HeroSlider> {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth <= 800;
     final height = isMobile
-        ? MediaQuery.of(context).size.height - 70.0
-        : MediaQuery.of(context).size.height - 88.0;
+        ? 620.0
+        : (MediaQuery.of(context).size.height - 88.0 < 600
+            ? 600.0
+            : MediaQuery.of(context).size.height - 88.0);
 
     return Container(
-      height: height < 600 ? 600 : height,
+      height: height,
       width: double.infinity,
       color: AppTheme.backgroundCream,
       child: Stack(
@@ -127,64 +129,70 @@ class _HeroSliderState extends State<HeroSlider> {
       return Container(
         key: key,
         color: AppTheme.backgroundCream,
-        padding: const EdgeInsets.fromLTRB(24, 20, 24, 50),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                slide.title,
-                maxLines: 1,
-                style: GoogleFonts.cormorantGaramond(
-                  color: AppTheme.textDark,
-                  fontSize: 58,
-                  fontWeight: FontWeight.w300,
-                  height: 0.98,
-                  letterSpacing: -1.0,
+        width: double.infinity,
+        child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  slide.title,
+                  maxLines: 1,
+                  style: GoogleFonts.cormorantGaramond(
+                    color: AppTheme.textDark,
+                    fontSize: 48,
+                    fontWeight: FontWeight.w400,
+                    height: 1.05,
+                    letterSpacing: -1.0,
+                  ),
                 ),
-              ),
-            ).animate().fadeIn(duration: 700.ms).slideY(begin: 0.1, end: 0),
-            const SizedBox(height: 14),
-            Text(
-              slide.subtitle,
-              style: GoogleFonts.montserrat(
-                color: AppTheme.textDark.withOpacity(0.85),
-                fontSize: 15,
-                height: 1.5,
-              ),
-            ).animate().fadeIn(delay: 200.ms, duration: 700.ms),
-            const SizedBox(height: 22),
-            ElevatedButton(
-              onPressed: () {
-                Utils.showBookingOptions(context);
-              },
-              child: Text(
-                'Book now',
+              ).animate().fadeIn(duration: 700.ms).slideY(begin: 0.1, end: 0),
+              const SizedBox(height: 12),
+              Text(
+                slide.subtitle,
                 style: GoogleFonts.montserrat(
+                  color: AppTheme.textDark.withOpacity(0.85),
                   fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  height: 1.5,
                 ),
-              ),
-            ).animate().fadeIn(delay: 350.ms, duration: 700.ms),
-            const SizedBox(height: 24),
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(4),
+              ).animate().fadeIn(delay: 200.ms, duration: 700.ms),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Utils.showBookingOptions(context);
+                },
+                child: Text(
+                  'Book now',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ).animate().fadeIn(delay: 350.ms, duration: 700.ms),
+              const SizedBox(height: 24),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
                 child: SizedBox(
                   width: double.infinity,
-                  child: Image.asset(slide.imagePath, fit: BoxFit.cover)
-                      .animate()
-                      .scale(
+                  height: 300,
+                  child: Image.asset(
+                    slide.imagePath,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.center,
+                  ).animate().scale(
                         begin: const Offset(1.05, 1.05),
                         end: const Offset(1.0, 1.0),
                         duration: 8000.ms,
                       ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     }

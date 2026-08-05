@@ -19,6 +19,8 @@ class AppConstants {
   static const String strengtheningImage = 'assets/images/gel.png';
   static const String cuticleCareImage = 'assets/images/extensions.png';
   static const String studioBannerImage = 'assets/images/studio_banner.png';
+  static const String portfolioImage1 = 'assets/images/portfolio_1.jpg';
+  static const String portfolioImage2 = 'assets/images/portfolio_2.jpg';
 
   static const List<String> navLinks = [
     'Home',

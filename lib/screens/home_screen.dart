@@ -81,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: MobileDrawer(onNavTap: _scrollToSection),
+      endDrawer: MobileDrawer(onNavTap: _scrollToSection),
       body: Stack(
         children: [
           CustomScrollView(
@@ -134,15 +135,44 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(width: 40, height: 1, color: AppTheme.primaryGold),
+              const SizedBox(width: 16),
+              Text(
+                'OUR MENU',
+                style: GoogleFonts.montserrat(
+                  color: AppTheme.primaryGold,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 3.0,
+                ),
+              ),
+            ],
+          ).animate().fadeIn(delay: 100.ms).slideX(begin: -0.1),
+          const SizedBox(height: 24),
           Text(
             'Signature Treatments',
             style: GoogleFonts.cormorantGaramond(
               color: AppTheme.textDark,
-              fontSize: isMobile ? 38 : 52,
+              fontSize: isMobile ? 42 : 56,
               fontWeight: FontWeight.w400,
             ),
-          ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.2),
-          const SizedBox(height: 56),
+          ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: isMobile ? double.infinity : 600,
+            child: Text(
+              'Indulge in our curated selection of premium nail care and artistry. Each treatment is designed to elevate your everyday elegance with flawless precision.',
+              style: GoogleFonts.montserrat(
+                color: AppTheme.textDark.withOpacity(0.7),
+                fontSize: 15,
+                height: 1.6,
+              ),
+            ),
+          ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.1),
+          const SizedBox(height: 64),
           Builder(
             builder: (context) {
               double desktopCardWidth =
@@ -384,18 +414,18 @@ class _HoverServiceCardState extends State<HoverServiceCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
-        transform: Matrix4.identity()..translate(0.0, _isHovered ? -6.0 : 0.0),
+        color: Colors.transparent,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. Photo (Clean rectangle with hover zoom)
+            // 1. Photo (Tall portrait, minimal border radius, elegant zoom)
             ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: AspectRatio(
-                aspectRatio: 0.95,
+                aspectRatio: 0.8,
                 child: AnimatedScale(
                   scale: _isHovered ? 1.05 : 1.0,
-                  duration: const Duration(milliseconds: 600),
+                  duration: const Duration(milliseconds: 700),
                   curve: Curves.easeOutCubic,
                   child: Image.asset(
                     widget.imagePath,
@@ -404,60 +434,59 @@ class _HoverServiceCardState extends State<HoverServiceCard> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            // 2. Service Title
+            const SizedBox(height: 24),
+            // 2. Service Title (Large and elegant)
             Text(
               widget.title,
               style: GoogleFonts.cormorantGaramond(
                 color: AppTheme.textDark,
-                fontSize: 26,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            const SizedBox(height: 4),
-            // 3. Price Tag
-            Text(
-              widget.price,
-              style: GoogleFonts.montserrat(
-                color: AppTheme.textDark.withOpacity(0.75),
-                fontSize: 14,
+                fontSize: 32,
                 fontWeight: FontWeight.w500,
+                height: 1.1,
               ),
             ),
-            const SizedBox(height: 14),
-            // 4. Description
+            const SizedBox(height: 12),
+            // 3. Description (Price Removed completely)
             Text(
               widget.description,
               style: GoogleFonts.montserrat(
-                color: AppTheme.textDark.withOpacity(0.85),
+                color: AppTheme.textDark.withOpacity(0.7),
                 fontSize: 14,
                 height: 1.6,
               ),
             ),
-            const SizedBox(height: 24),
-            // 5. Full-Width Solid Black Pill Button
+            const SizedBox(height: 20),
+            // 4. Elegant Minimalist Action Link
             InkWell(
               onTap: () {
                 Utils.showBookingOptions(context);
               },
-              borderRadius: BorderRadius.circular(30),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                decoration: BoxDecoration(
-                  color: _isHovered ? AppTheme.primaryGold : AppTheme.textDark,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  'Book appointment',
-                  style: GoogleFonts.montserrat(
-                    color: _isHovered ? AppTheme.textDark : AppTheme.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: 0.5,
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'BOOK APPOINTMENT',
+                      style: GoogleFonts.montserrat(
+                        color: AppTheme.textDark,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOut,
+                      transform: Matrix4.identity()..translate(_isHovered ? 6.0 : 0.0),
+                      child: const Icon(
+                        Icons.arrow_forward,
+                        size: 14,
+                        color: AppTheme.textDark,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -490,12 +519,13 @@ class _HoverFeatureItemState extends State<HoverFeatureItem> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width <= 800;
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        width: 270,
+        width: isMobile ? double.infinity : 270,
         padding: const EdgeInsets.all(28),
         decoration: BoxDecoration(
           color: _isHovered ? const Color(0xFF161514) : const Color(0xFFFFFFFF),
@@ -643,6 +673,8 @@ class _MarqueeGalleryState extends State<MarqueeGallery> {
 
     // Use multiple images to create a long scrolling list
     final List<String> images = [
+      AppConstants.portfolioImage1,
+      AppConstants.portfolioImage2,
       AppConstants.gelExtensionImage,
       AppConstants.manicureImage,
       AppConstants.gelImage,
