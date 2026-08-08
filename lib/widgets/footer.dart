@@ -119,7 +119,7 @@ class Footer extends StatelessWidget {
             const SizedBox(height: 8),
             _buildContactInfo(Icons.phone, '+91 8281791180'),
             const SizedBox(height: 8),
-            _buildContactInfo(Icons.email, 'hello@nailaura.com'),
+            _buildContactInfo(Icons.email, 'thenailauraofficial@gmail.com'),
           ],
         ),
       ),

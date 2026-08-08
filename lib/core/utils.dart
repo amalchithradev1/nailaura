@@ -6,7 +6,7 @@ import 'theme.dart';
 class Utils {
   // Contact Details
   static const String studioPhone = '+918281791180'; // Assuming +91 for WhatsApp to work correctly
-  static const String studioEmail = 'aswathyprasad6790@gmail.com';
+  static const String studioEmail = 'thenailauraofficial@gmail.com';
 
   static void showBookingOptions(BuildContext context) {
     showDialog(
@@ -19,8 +19,8 @@ class Utils {
           elevation: 0,
           backgroundColor: Colors.transparent,
           child: Container(
-            width: 480,
-            padding: const EdgeInsets.all(36),
+            constraints: const BoxConstraints(maxWidth: 480),
+            padding: EdgeInsets.all(MediaQuery.of(context).size.width <= 600 ? 20 : 36),
             decoration: BoxDecoration(
               color: const Color(0xFF161514), // Deep luxury charcoal
               borderRadius: BorderRadius.circular(12),
@@ -36,8 +36,9 @@ class Utils {
                 ),
               ],
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Top header row
@@ -142,7 +143,8 @@ class Utils {
               ],
             ),
           ),
-        );
+        ),
+      );
       },
     );
   }
@@ -150,7 +152,8 @@ class Utils {
   // --- URL Launchers ---
 
   static Future<void> _launchWhatsApp() async {
-    final message = Uri.encodeComponent("Hi Nailaura! I would like to book an appointment.");
+    final message = Uri.encodeComponent(
+        "Hello nailaura ✧\n\nI would love to schedule an appointment. Could you please let me know your availability?\n\nThank you!");
     final cleanPhone = studioPhone.replaceAll(RegExp(r'\D'), '');
     final url = Uri.parse('https://wa.me/$cleanPhone?text=$message');
     if (await canLaunchUrl(url)) {
@@ -170,7 +173,9 @@ class Utils {
   }
 
   static Future<void> _launchEmail() async {
-    final url = Uri.parse('mailto:$studioEmail?subject=Appointment%20Booking');
+    final body = Uri.encodeComponent(
+        "Hello Nailaura ✧\n\nI would love to schedule an appointment. Could you please let me know your availability?\n\nThank you!");
+    final url = Uri.parse('mailto:$studioEmail?subject=Appointment%20Booking&body=$body');
     if (await canLaunchUrl(url)) {
       await launchUrl(url);
     } else {
@@ -205,6 +210,7 @@ class _LuxuryBookingOptionCardState extends State<_LuxuryBookingOptionCard> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width <= 450;
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -213,7 +219,8 @@ class _LuxuryBookingOptionCardState extends State<_LuxuryBookingOptionCard> {
         borderRadius: BorderRadius.circular(10),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          padding: EdgeInsets.symmetric(
+              horizontal: isMobile ? 10 : 16, vertical: isMobile ? 12 : 16),
           decoration: BoxDecoration(
             color: _isHovered
                 ? AppTheme.primaryGold
@@ -229,7 +236,7 @@ class _LuxuryBookingOptionCardState extends State<_LuxuryBookingOptionCard> {
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(isMobile ? 8 : 12),
                 decoration: BoxDecoration(
                   color: _isHovered
                       ? const Color(0xFF161514)
@@ -242,7 +249,7 @@ class _LuxuryBookingOptionCardState extends State<_LuxuryBookingOptionCard> {
                   size: 20,
                 ),
               ),
-              const SizedBox(width: 18),
+              SizedBox(width: isMobile ? 8 : 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,7 +261,7 @@ class _LuxuryBookingOptionCardState extends State<_LuxuryBookingOptionCard> {
                             ? const Color(0xFF161514)
                             : AppTheme.white,
                         fontWeight: FontWeight.w600,
-                        fontSize: 20,
+                        fontSize: isMobile ? 16 : 20,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -270,7 +277,7 @@ class _LuxuryBookingOptionCardState extends State<_LuxuryBookingOptionCard> {
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 6),

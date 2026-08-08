@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -24,22 +25,25 @@ class NavBar extends StatelessWidget {
   }
 
   Widget _buildDesktopNav(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      height: isScrolled ? 64 : 70,
-      padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 0),
-      decoration: BoxDecoration(
-        color: isScrolled ? AppTheme.backgroundCream : Colors.transparent,
-        boxShadow: isScrolled
-            ? [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
-                  blurRadius: 15,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : [],
-      ),
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: isScrolled ? 12.0 : 0.0, sigmaY: isScrolled ? 12.0 : 0.0),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          height: isScrolled ? 64 : 70,
+          padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 0),
+          decoration: BoxDecoration(
+            color: isScrolled ? AppTheme.backgroundCream.withOpacity(0.85) : Colors.transparent,
+            boxShadow: isScrolled
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.06),
+                      blurRadius: 15,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : [],
+          ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -107,26 +111,31 @@ class NavBar extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 
   Widget _buildMobileNav(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      height: isScrolled ? 60 : 70,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
-      decoration: BoxDecoration(
-        color: isScrolled ? AppTheme.backgroundCream : Colors.transparent,
-        boxShadow: isScrolled
-            ? [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : [],
-      ),
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: isScrolled ? 12.0 : 0.0, sigmaY: isScrolled ? 12.0 : 0.0),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          height: isScrolled ? 60 : 70,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
+          decoration: BoxDecoration(
+            color: isScrolled ? AppTheme.backgroundCream.withOpacity(0.85) : Colors.transparent,
+            boxShadow: isScrolled
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.06),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : [],
+          ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -139,8 +148,10 @@ class NavBar extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 
   Widget _buildLogo(BuildContext context) {
     return Padding(

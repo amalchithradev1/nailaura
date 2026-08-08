@@ -8,6 +8,7 @@ import '../core/utils.dart';
 import '../widgets/navbar.dart';
 import '../widgets/footer.dart';
 import '../widgets/hero_slider.dart';
+import '../widgets/scroll_reveal.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -135,43 +136,51 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(width: 40, height: 1, color: AppTheme.primaryGold),
-              const SizedBox(width: 16),
-              Text(
-                'OUR MENU',
+          ScrollReveal(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(width: 40, height: 1, color: AppTheme.primaryGold),
+                const SizedBox(width: 16),
+                Text(
+                  'OUR MENU',
+                  style: GoogleFonts.montserrat(
+                    color: AppTheme.primaryGold,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 3.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          ScrollReveal(
+            delay: 150.ms,
+            child: Text(
+              'Signature Treatments',
+              style: GoogleFonts.cormorantGaramond(
+                color: AppTheme.textDark,
+                fontSize: isMobile ? 42 : 56,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          ScrollReveal(
+            delay: 300.ms,
+            child: SizedBox(
+              width: isMobile ? double.infinity : 600,
+              child: Text(
+                'Indulge in our curated selection of premium nail care and artistry. Each treatment is designed to elevate your everyday elegance with flawless precision.',
                 style: GoogleFonts.montserrat(
-                  color: AppTheme.primaryGold,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 3.0,
+                  color: AppTheme.textDark.withOpacity(0.7),
+                  fontSize: 15,
+                  height: 1.6,
                 ),
               ),
-            ],
-          ).animate().fadeIn(delay: 100.ms).slideX(begin: -0.1),
-          const SizedBox(height: 24),
-          Text(
-            'Signature Treatments',
-            style: GoogleFonts.cormorantGaramond(
-              color: AppTheme.textDark,
-              fontSize: isMobile ? 42 : 56,
-              fontWeight: FontWeight.w400,
             ),
-          ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: isMobile ? double.infinity : 600,
-            child: Text(
-              'Indulge in our curated selection of premium nail care and artistry. Each treatment is designed to elevate your everyday elegance with flawless precision.',
-              style: GoogleFonts.montserrat(
-                color: AppTheme.textDark.withOpacity(0.7),
-                fontSize: 15,
-                height: 1.6,
-              ),
-            ),
-          ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.1),
+          ),
           const SizedBox(height: 64),
           Builder(
             builder: (context) {
@@ -179,18 +188,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   (screenWidth - 128 - 64) / 3; // 3 columns max
               if (desktopCardWidth < 300) desktopCardWidth = 300;
               final double cardWidth = isMobile
-                  ? double.infinity
+                  ? screenWidth - 48
                   : desktopCardWidth;
 
               Widget buildCard(
-                  String title, String price, String desc, String img) {
+                  String title, String price, String desc, String img, int delayMs) {
                 return SizedBox(
                   width: cardWidth,
-                  child: HoverServiceCard(
-                    title: title,
-                    price: price,
-                    description: desc,
-                    imagePath: img,
+                  child: ScrollReveal(
+                    delay: Duration(milliseconds: delayMs),
+                    child: HoverServiceCard(
+                      title: title,
+                      price: price,
+                      description: desc,
+                      imagePath: img,
+                    ),
                   ),
                 );
               }
@@ -205,36 +217,42 @@ class _HomeScreenState extends State<HomeScreen> {
                     '\$45.00',
                     'Express your unique style with intricate, hand-painted minimal designs.',
                     AppConstants.nailArtImage,
+                    100,
                   ),
                   buildCard(
                     'Dry Manicure',
                     '\$50.00',
                     'A timeless finish for healthy, naturally glowing nails and pristine cuticles.',
                     AppConstants.manicureImage,
+                    200,
+                  ),
+                  buildCard(
+                    'Gel Extensions',
+                    '₹2,499+',
+                    'Bespoke sculptured extensions tailored to your natural nail shape. Finished with our signature high-gloss top coat.',
+                    AppConstants.gelExtensionImage,
+                    300,
                   ),
                   buildCard(
                     'Gap Filling',
                     '\$40.00',
                     'Precision acrylic and gel maintenance to restore strength, structure, and flawless look.',
                     AppConstants.gapFillingImage,
+                    400,
                   ),
                   buildCard(
-                    'Nail Strengthening',
+                    'Gel polish',
                     '\$35.00',
                     'Intensive keratin and botanical infusion to restore damaged, brittle nails to full health.',
                     AppConstants.strengtheningImage,
+                    500,
                   ),
                   buildCard(
                     'Soft Gel Extension',
-                    '\$75.00',
-                    'Sculpted to absolute perfection with lightweight, natural-looking gel for incredible length.',
+                    '\$65.00',
+                    'Lightweight, durable full-cover tips for instant length and impeccable shape.',
                     AppConstants.cuticleCareImage,
-                  ),
-                  buildCard(
-                    'Poly Gel Extension',
-                    '\$85.00',
-                    'The best of both worlds: lighter than acrylics, stronger than hard gel for flawless structure.',
-                    AppConstants.gelExtensionImage,
+                    600,
                   ),
                 ],
               );
@@ -260,68 +278,30 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           isMobile
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'THE EXPERIENCE',
-                      style: GoogleFonts.montserrat(
-                        color: AppTheme.primaryGold,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 3.0,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Why Choose Nailaura',
-                      style: GoogleFonts.cormorantGaramond(
-                        color: AppTheme.textDark,
-                        fontSize: 40,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Our studio combines luxury, hygiene, and art. We use industry-leading, non-toxic products to ensure your nails remain healthy, vibrant, and flawlessly styled.',
-                      style: GoogleFonts.montserrat(
-                        color: AppTheme.textDark.withOpacity(0.75),
-                        fontSize: 14,
-                        height: 1.6,
-                      ),
-                    ),
-                  ],
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'THE EXPERIENCE',
-                          style: GoogleFonts.montserrat(
-                            color: AppTheme.primaryGold,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 3.0,
-                          ),
+              ? ScrollReveal(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'THE EXPERIENCE',
+                        style: GoogleFonts.montserrat(
+                          color: AppTheme.primaryGold,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 3.0,
                         ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'Why Choose Nailaura',
-                          style: GoogleFonts.cormorantGaramond(
-                            color: AppTheme.textDark,
-                            fontSize: 52,
-                            fontWeight: FontWeight.w400,
-                          ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Why Choose Nailaura',
+                        style: GoogleFonts.cormorantGaramond(
+                          color: AppTheme.textDark,
+                          fontSize: 40,
+                          fontWeight: FontWeight.w400,
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: 420,
-                      child: Text(
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
                         'Our studio combines luxury, hygiene, and art. We use industry-leading, non-toxic products to ensure your nails remain healthy, vibrant, and flawlessly styled.',
                         style: GoogleFonts.montserrat(
                           color: AppTheme.textDark.withOpacity(0.75),
@@ -329,8 +309,50 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 1.6,
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                )
+              : ScrollReveal(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'THE EXPERIENCE',
+                            style: GoogleFonts.montserrat(
+                              color: AppTheme.primaryGold,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 3.0,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Why Choose Nailaura',
+                            style: GoogleFonts.cormorantGaramond(
+                              color: AppTheme.textDark,
+                              fontSize: 52,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 420,
+                        child: Text(
+                          'Our studio combines luxury, hygiene, and art. We use industry-leading, non-toxic products to ensure your nails remain healthy, vibrant, and flawlessly styled.',
+                          style: GoogleFonts.montserrat(
+                            color: AppTheme.textDark.withOpacity(0.75),
+                            fontSize: 14,
+                            height: 1.6,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
           const SizedBox(height: 36),
           Container(
@@ -344,33 +366,45 @@ class _HomeScreenState extends State<HomeScreen> {
             runSpacing: 32,
             alignment: WrapAlignment.start,
             children: [
-              HoverFeatureItem(
-                number: '01',
-                title: 'Premium Products',
-                icon: Icons.diamond_outlined,
-                desc:
-                    'We use industry-leading, non-toxic products to ensure healthy, vibrant nails.',
+              ScrollReveal(
+                delay: 100.ms,
+                child: const HoverFeatureItem(
+                  number: '01',
+                  title: 'Premium Products',
+                  icon: Icons.diamond_outlined,
+                  desc:
+                      'We use industry-leading, non-toxic products to ensure healthy, vibrant nails.',
+                ),
               ),
-              HoverFeatureItem(
-                number: '02',
-                title: 'Expert Artists',
-                icon: Icons.brush_outlined,
-                desc:
-                    'Our licensed technicians are trained in the latest nail art techniques.',
+              ScrollReveal(
+                delay: 200.ms,
+                child: const HoverFeatureItem(
+                  number: '02',
+                  title: 'Expert Artists',
+                  icon: Icons.brush_outlined,
+                  desc:
+                      'Our licensed technicians are trained in the latest nail art techniques.',
+                ),
               ),
-              HoverFeatureItem(
-                number: '03',
-                title: 'Ultimate Hygiene',
-                icon: Icons.clean_hands_outlined,
-                desc:
-                    'Strict sterilization protocols for a safe, worry-free pampering session.',
+              ScrollReveal(
+                delay: 300.ms,
+                child: const HoverFeatureItem(
+                  number: '03',
+                  title: 'Ultimate Hygiene',
+                  icon: Icons.clean_hands_outlined,
+                  desc:
+                      'Strict sterilization protocols for a safe, worry-free pampering session.',
+                ),
               ),
-              HoverFeatureItem(
-                number: '04',
-                title: 'Relaxing Vibe',
-                icon: Icons.spa_outlined,
-                desc:
-                    'A serene environment designed for you to unwind and relax completely.',
+              ScrollReveal(
+                delay: 400.ms,
+                child: const HoverFeatureItem(
+                  number: '04',
+                  title: 'Relaxing Vibe',
+                  icon: Icons.spa_outlined,
+                  desc:
+                      'A serene environment designed for you to unwind and relax completely.',
+                ),
               ),
             ],
           ),
@@ -525,7 +559,7 @@ class _HoverFeatureItemState extends State<HoverFeatureItem> {
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        width: isMobile ? double.infinity : 270,
+        width: isMobile ? MediaQuery.of(context).size.width - 48 : 270,
         padding: const EdgeInsets.all(28),
         decoration: BoxDecoration(
           color: _isHovered ? const Color(0xFF161514) : const Color(0xFFFFFFFF),
