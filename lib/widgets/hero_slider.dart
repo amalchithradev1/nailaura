@@ -64,7 +64,7 @@ class _HeroSliderState extends State<HeroSlider> {
   }
 
   void _startAutoSlide() {
-    _timer = Timer.periodic(const Duration(seconds: 6), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (mounted) {
         setState(() {
           if (_currentPage < slides.length - 1) {

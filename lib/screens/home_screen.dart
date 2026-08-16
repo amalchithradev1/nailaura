@@ -9,8 +9,11 @@ import '../widgets/navbar.dart';
 import '../widgets/footer.dart';
 import '../widgets/hero_slider.dart';
 import '../widgets/scroll_reveal.dart';
+import '../widgets/offer_section.dart';
 
 class HomeScreen extends StatefulWidget {
+  static const bool isOfferActive = true;
+
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -95,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       key: _homeKey,
                       height: MediaQuery.of(context).size.width > 800 ? 70 : 60,
                     ),
+                    if (HomeScreen.isOfferActive) const OfferSection(),
                     Container(child: const HeroSlider()),
                     Container(
                       key: _servicesKey,
@@ -679,6 +683,7 @@ class _MarqueeGalleryState extends State<MarqueeGallery> {
   }
 
   void _startMarquee() {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(milliseconds: 30), (timer) {
       if (_scrollController.hasClients) {
         double maxScroll = _scrollController.position.maxScrollExtent;
@@ -691,6 +696,10 @@ class _MarqueeGalleryState extends State<MarqueeGallery> {
         }
       }
     });
+  }
+
+  void _pauseMarquee() {
+    _timer?.cancel();
   }
 
   @override
@@ -742,13 +751,19 @@ class _MarqueeGalleryState extends State<MarqueeGallery> {
           const SizedBox(height: 48),
           SizedBox(
             height: 360,
-            child: ListView.builder(
-              controller: _scrollController,
-              scrollDirection: Axis.horizontal,
-              // Intentionally large number to simulate infinite loop
-              itemCount: 1000,
-              physics:
-                  const NeverScrollableScrollPhysics(), // User shouldn't scroll it manually
+            child: Listener(
+              onPointerDown: (_) => _pauseMarquee(),
+              onPointerUp: (_) => _startMarquee(),
+              onPointerCancel: (_) => _startMarquee(),
+              child: MouseRegion(
+                onEnter: (_) => _pauseMarquee(),
+                onExit: (_) => _startMarquee(),
+                child: ListView.builder(
+                  controller: _scrollController,
+                  scrollDirection: Axis.horizontal,
+                  // Intentionally large number to simulate infinite loop
+                  itemCount: 1000,
+                  physics: const BouncingScrollPhysics(),
               itemBuilder: (context, index) {
                 final imagePath = images[index % images.length];
                 return Container(
@@ -775,6 +790,8 @@ class _MarqueeGalleryState extends State<MarqueeGallery> {
                 );
               },
             ),
+          ),
+        ),
           ),
         ],
       ),
