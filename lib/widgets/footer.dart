@@ -8,22 +8,16 @@ class Footer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width <= 800;
+    
     return Container(
       width: double.infinity,
       color: AppTheme.textDark,
-      padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 48),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth > 800) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: EdgeInsets.symmetric(horizontal: isMobile ? 24 : 64, vertical: 48),
+      child: isMobile
+          ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: _buildFooterContent(context),
-            );
-          } else {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: _buildFooterContent(context)
+              children: _buildFooterContent(context, true)
                   .map(
                     (widget) => Padding(
                       padding: const EdgeInsets.only(bottom: 32),
@@ -31,18 +25,26 @@ class Footer extends StatelessWidget {
                     ),
                   )
                   .toList(),
-            );
-          }
-        },
-      ),
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: _buildFooterContent(context, false),
+            ),
     );
   }
 
-  List<Widget> _buildFooterContent(BuildContext context) {
+  Widget _wrapExpanded({required int flex, required bool isMobile, required Widget child}) {
+    if (isMobile) return child;
+    return Expanded(flex: flex, child: child);
+  }
+
+  List<Widget> _buildFooterContent(BuildContext context, bool isMobile) {
     return [
       // Column 1: Brand
-      Expanded(
+      _wrapExpanded(
         flex: 2,
+        isMobile: isMobile,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -50,14 +52,16 @@ class Footer extends StatelessWidget {
               children: [
                 Image.asset(
                   AppConstants.logoIcon,
-                  height: 52,
+                  height: 48,
                   fit: BoxFit.contain,
                 ),
                 const SizedBox(width: 14),
-                Image.asset(
-                  AppConstants.logoTextGold,
-                  height: 44,
-                  fit: BoxFit.contain,
+                Flexible(
+                  child: Image.asset(
+                    AppConstants.logoTextGold,
+                    height: 40,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ],
             ),
@@ -73,10 +77,11 @@ class Footer extends StatelessWidget {
           ],
         ),
       ),
-      const SizedBox(width: 32),
+      if (!isMobile) const SizedBox(width: 32),
       // Column 2: Links
-      Expanded(
+      _wrapExpanded(
         flex: 1,
+        isMobile: isMobile,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -96,10 +101,11 @@ class Footer extends StatelessWidget {
           ],
         ),
       ),
-      const SizedBox(width: 32),
+      if (!isMobile) const SizedBox(width: 32),
       // Column 3: Contact
-      Expanded(
+      _wrapExpanded(
         flex: 1,
+        isMobile: isMobile,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -60,13 +60,14 @@ class _ScrollRevealState extends State<ScrollReveal> {
       },
       child: widget.child.animate(
         target: (_isVisible || (widget.animateOnce && _hasAnimated)) ? 1 : 0,
-        delay: widget.delay,
       )
       .fadeIn(
+        delay: widget.delay,
         duration: widget.duration,
         curve: widget.curve,
       )
       .slideY(
+        delay: widget.delay,
         begin: widget.yOffset / 100, // Approximate percentage for slide
         end: 0,
         duration: widget.duration,
