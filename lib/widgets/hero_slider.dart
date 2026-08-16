@@ -137,19 +137,15 @@ class _HeroSliderState extends State<HeroSlider> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  slide.title,
-                  maxLines: 1,
-                  style: GoogleFonts.cormorantGaramond(
-                    color: AppTheme.textDark,
-                    fontSize: 48,
-                    fontWeight: FontWeight.w400,
-                    height: 1.05,
-                    letterSpacing: -1.0,
-                  ),
+              Text(
+                slide.title,
+                maxLines: 2,
+                style: GoogleFonts.cormorantGaramond(
+                  color: AppTheme.textDark,
+                  fontSize: 42,
+                  fontWeight: FontWeight.w400,
+                  height: 1.05,
+                  letterSpacing: -1.0,
                 ),
               ).animate().fadeIn(duration: 700.ms).slideY(begin: 0.1, end: 0),
               const SizedBox(height: 12),
@@ -226,19 +222,15 @@ class _HeroSliderState extends State<HeroSlider> {
             left: 64,
             top: 110,
             right: 40, // Allows text to stretch horizontally without wrapping
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                slide.title,
-                maxLines: 1,
-                style: GoogleFonts.cormorantGaramond(
-                  color: AppTheme.textDark,
-                  fontSize: screenWidth > 1400 ? 118 : 98,
-                  fontWeight: FontWeight.w300,
-                  height: 0.94,
-                  letterSpacing: -1.5,
-                ),
+            child: Text(
+              slide.title,
+              maxLines: 2,
+              style: GoogleFonts.cormorantGaramond(
+                color: AppTheme.textDark,
+                fontSize: screenWidth > 1400 ? 118 : 98,
+                fontWeight: FontWeight.w300,
+                height: 0.94,
+                letterSpacing: -1.5,
               ),
             ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.08, end: 0),
           ),
