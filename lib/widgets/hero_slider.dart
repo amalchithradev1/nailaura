@@ -102,7 +102,9 @@ class _HeroSliderState extends State<HeroSlider> {
         children: [
           Positioned.fill(
             child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 1000),
+              duration: const Duration(milliseconds: 700),
+              switchInCurve: const Interval(0.3, 1.0, curve: Curves.easeIn),
+              switchOutCurve: const Interval(0.0, 0.4, curve: Curves.easeOut),
               transitionBuilder: (Widget child, Animation<double> animation) {
                 return FadeTransition(opacity: animation, child: child);
               },

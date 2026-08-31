@@ -12,7 +12,7 @@ import '../widgets/scroll_reveal.dart';
 import '../widgets/offer_section.dart';
 
 class HomeScreen extends StatefulWidget {
-  static const bool isOfferActive = true;
+  static const bool isOfferActive = false;
 
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -718,10 +718,10 @@ class _MarqueeGalleryState extends State<MarqueeGallery> {
     final List<String> images = [
       AppConstants.portfolioImage1,
       AppConstants.portfolioImage2,
-      AppConstants.gelExtensionImage,
-      AppConstants.manicureImage,
-      AppConstants.gelImage,
-      AppConstants.extensionsImage,
+      AppConstants.portfolioImage3,
+      AppConstants.portfolioImage4,
+      AppConstants.portfolioImage5,
+      AppConstants.portfolioImage6,
     ];
 
     return Container(
