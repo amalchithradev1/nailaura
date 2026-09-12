@@ -304,11 +304,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               constraints: const BoxConstraints(maxWidth: 680),
               child: Column(
                 children: [
-                  // 1. Top Luxury Campaign Banner
-                  _buildCampaignBanner(),
-                  const SizedBox(height: 20),
-
-                  // 2. Main Store Header & Logo
+                  // 1. Main Store Header & Logo
                   _buildHeaderCard(),
                   const SizedBox(height: 16),
 
@@ -336,42 +332,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     );
   }
 
-  Widget _buildCampaignBanner() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF2C2416), Color(0xFF1A1713), Color(0xFF2C2416)],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.primaryGold.withValues(alpha: 0.3), width: 1),
-      ),
-      child: Column(
-        children: [
-          Text(
-            "WHAT'S IN THIS SEASON",
-            style: GoogleFonts.montserrat(
-              color: AppTheme.primaryGold,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 2.5,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            "LUXURY NAILCARE & BESPOKE ARTISTRY",
-            style: GoogleFonts.cormorantGaramond(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.0,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   Widget _buildHeaderCard() {
     return Container(
