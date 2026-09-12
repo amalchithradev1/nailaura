@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -51,12 +52,18 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   }
 
   double get totalAmount => double.tryParse(totalStr) ?? 0.0;
-  double get taxableValue => totalAmount / 1.05;
-  double get cgst => (totalAmount - taxableValue) / 2;
-  double get sgst => cgst;
 
   Future<Uint8List> _generatePdfBytes() async {
     final pdf = pw.Document();
+
+    pw.MemoryImage? logoIconImage;
+    pw.MemoryImage? logoTextImage;
+    try {
+      final iconData = await rootBundle.load('assets/images/logo_icon_gold.png');
+      final textData = await rootBundle.load('assets/images/logo_text_gold.png');
+      logoIconImage = pw.MemoryImage(iconData.buffer.asUint8List());
+      logoTextImage = pw.MemoryImage(textData.buffer.asUint8List());
+    } catch (_) {}
 
     final goldColor = PdfColor.fromHex('#C5A059');
     final darkGoldColor = PdfColor.fromHex('#A37F38');
@@ -70,54 +77,55 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              // Header
+              // Header with Official Gold Brand Logos
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
                 children: [
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text(
-                        'NAILAURA',
-                        style: pw.TextStyle(
-                          fontSize: 26,
-                          fontWeight: pw.FontWeight.bold,
-                          color: goldColor,
+                  if (logoIconImage != null && logoTextImage != null)
+                    pw.Row(
+                      crossAxisAlignment: pw.CrossAxisAlignment.center,
+                      children: [
+                        pw.Image(logoIconImage, width: 48, height: 48, fit: pw.BoxFit.contain),
+                        pw.SizedBox(width: 12),
+                        pw.Image(logoTextImage, height: 36, fit: pw.BoxFit.contain),
+                      ],
+                    )
+                  else
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text(
+                          'NAILAURA',
+                          style: pw.TextStyle(
+                            fontSize: 26,
+                            fontWeight: pw.FontWeight.bold,
+                            color: goldColor,
+                          ),
                         ),
-                      ),
-                      pw.Text(
-                        'THE NAILART STUDIO',
-                        style: pw.TextStyle(
-                          fontSize: 9,
-                          fontWeight: pw.FontWeight.bold,
-                          color: darkGoldColor,
-                          letterSpacing: 1.8,
+                        pw.Text(
+                          'THE NAILART STUDIO',
+                          style: pw.TextStyle(
+                            fontSize: 9,
+                            fontWeight: pw.FontWeight.bold,
+                            color: darkGoldColor,
+                            letterSpacing: 1.8,
+                          ),
                         ),
-                      ),
-                      pw.SizedBox(height: 6),
-                      pw.Text(
-                        'Luxury Nailcare & Beauty Studio',
-                        style: pw.TextStyle(fontSize: 10, color: PdfColors.grey700),
-                      ),
-                      pw.Text(
-                        'Kowdiar / Lulu Mall, Thiruvananthapuram, Kerala',
-                        style: pw.TextStyle(fontSize: 9, color: PdfColors.grey600),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
                   pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.end,
                     children: [
                       pw.Container(
-                        padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                         decoration: pw.BoxDecoration(
                           color: PdfColor.fromHex('#F6EFD9'),
-                          borderRadius: pw.BorderRadius.circular(4),
-                          border: pw.Border.all(color: goldColor, width: 0.5),
+                          borderRadius: pw.BorderRadius.circular(6),
+                          border: pw.Border.all(color: goldColor, width: 0.8),
                         ),
                         child: pw.Text(
-                          'TAX INVOICE',
+                          'INVOICE RECEIPT',
                           style: pw.TextStyle(
                             color: darkGoldColor,
                             fontWeight: pw.FontWeight.bold,
@@ -128,35 +136,59 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                       pw.SizedBox(height: 6),
                       pw.Text('Invoice #: $invoiceNumber', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11)),
                       pw.Text('Date: $dateStr', style: const pw.TextStyle(fontSize: 10)),
-                      pw.Text('Payment: PAID', style: pw.TextStyle(fontSize: 10, color: PdfColor.fromHex('#2E7D32'), fontWeight: pw.FontWeight.bold)),
+                      pw.Text('Status: PAID', style: pw.TextStyle(fontSize: 10, color: PdfColor.fromHex('#2E7D32'), fontWeight: pw.FontWeight.bold)),
                     ],
                   ),
                 ],
               ),
-              pw.SizedBox(height: 20),
-              pw.Divider(color: borderColor),
-              pw.SizedBox(height: 10),
+              pw.SizedBox(height: 16),
+              pw.Container(
+                width: double.infinity,
+                padding: const pw.EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                decoration: pw.BoxDecoration(
+                  color: PdfColor.fromHex('#F9F6F0'),
+                  borderRadius: pw.BorderRadius.circular(6),
+                  border: pw.Border.all(color: borderColor, width: 0.5),
+                ),
+                child: pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text('Location: Kulathoor, Trivandrum - 695583', style: const pw.TextStyle(fontSize: 9.5, color: PdfColors.grey800)),
+                    pw.Text('Phone: +91 8281791180', style: pw.TextStyle(fontSize: 9.5, fontWeight: pw.FontWeight.bold, color: darkGoldColor)),
+                  ],
+                ),
+              ),
+              pw.SizedBox(height: 16),
 
-              // Customer Info
+              // Customer Details
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text('Billed To: $customerName', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11)),
-                  pw.Text('Phone: $phone', style: const pw.TextStyle(fontSize: 10)),
+                  pw.Text('Customer Name: $customerName', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11)),
+                  pw.Text('Mobile: $phone', style: const pw.TextStyle(fontSize: 10)),
                 ],
               ),
-              pw.SizedBox(height: 16),
+              pw.SizedBox(height: 14),
 
               // Items Table
               pw.Table(
                 border: pw.TableBorder.all(color: borderColor, width: 0.5),
                 children: [
                   pw.TableRow(
-                    decoration: pw.BoxDecoration(color: PdfColor.fromHex('#F9F6F0')),
+                    decoration: pw.BoxDecoration(color: PdfColor.fromHex('#171719')),
                     children: [
-                      pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('Service Description', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10))),
-                      pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('Qty', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10), textAlign: pw.TextAlign.center)),
-                      pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('Amount (₹)', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10), textAlign: pw.TextAlign.right)),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text('Service Description', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10, color: PdfColor.fromHex('#C5A059'))),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text('Qty', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10, color: PdfColors.white), textAlign: pw.TextAlign.center),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text('Amount (Rs.)', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10, color: PdfColor.fromHex('#C5A059')), textAlign: pw.TextAlign.right),
+                      ),
                     ],
                   ),
                   ...itemsList.map((item) {
@@ -164,13 +196,13 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                       children: [
                         pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text(item['name'] ?? '', style: const pw.TextStyle(fontSize: 10))),
                         pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('1', style: const pw.TextStyle(fontSize: 10), textAlign: pw.TextAlign.center)),
-                        pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('₹${item['price']}', style: const pw.TextStyle(fontSize: 10), textAlign: pw.TextAlign.right)),
+                        pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('Rs. ${item['price']}', style: const pw.TextStyle(fontSize: 10), textAlign: pw.TextAlign.right)),
                       ],
                     );
                   }),
                 ],
               ),
-              pw.SizedBox(height: 20),
+              pw.SizedBox(height: 16),
 
               // Totals
               pw.Row(
@@ -183,24 +215,8 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                         pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           children: [
-                            pw.Text('Taxable Value:', style: const pw.TextStyle(fontSize: 9)),
-                            pw.Text('₹${taxableValue.toStringAsFixed(2)}', style: const pw.TextStyle(fontSize: 9)),
-                          ],
-                        ),
-                        pw.SizedBox(height: 4),
-                        pw.Row(
-                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                          children: [
-                            pw.Text('CGST @ 2.5%:', style: const pw.TextStyle(fontSize: 9)),
-                            pw.Text('₹${cgst.toStringAsFixed(2)}', style: const pw.TextStyle(fontSize: 9)),
-                          ],
-                        ),
-                        pw.SizedBox(height: 4),
-                        pw.Row(
-                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                          children: [
-                            pw.Text('SGST @ 2.5%:', style: const pw.TextStyle(fontSize: 9)),
-                            pw.Text('₹${sgst.toStringAsFixed(2)}', style: const pw.TextStyle(fontSize: 9)),
+                            pw.Text('Subtotal:', style: const pw.TextStyle(fontSize: 10)),
+                            pw.Text('Rs. ${totalAmount.toStringAsFixed(2)}', style: const pw.TextStyle(fontSize: 10)),
                           ],
                         ),
                         pw.Divider(color: borderColor),
@@ -208,7 +224,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           children: [
                             pw.Text('Total Amount:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12)),
-                            pw.Text('₹${totalAmount.toStringAsFixed(2)}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: goldColor)),
+                            pw.Text('Rs. ${totalAmount.toStringAsFixed(2)}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: goldColor)),
                           ],
                         ),
                       ],
@@ -216,6 +232,29 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                   ),
                 ],
               ),
+              pw.SizedBox(height: 20),
+
+              // 15-Day Warranty Box
+              pw.Container(
+                width: double.infinity,
+                padding: const pw.EdgeInsets.all(12),
+                decoration: pw.BoxDecoration(
+                  color: PdfColor.fromHex('#F6EFD9'),
+                  borderRadius: pw.BorderRadius.circular(6),
+                  border: pw.Border.all(color: goldColor, width: 0.6),
+                ),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text('15-DAY SERVICE WARRANTY POLICY', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9.5, color: darkGoldColor)),
+                    pw.SizedBox(height: 4),
+                    pw.Text('• We provide an exclusive 15-day service warranty on gel extensions and structured nail art.', style: const pw.TextStyle(fontSize: 8.5, color: PdfColors.grey800)),
+                    pw.Text('• Please retain this digital receipt for touch-ups or warranty inquiries within 15 days.', style: const pw.TextStyle(fontSize: 8.5, color: PdfColors.grey800)),
+                    pw.Text('• Services performed are non-refundable after service completion.', style: const pw.TextStyle(fontSize: 8.5, color: PdfColors.grey800)),
+                  ],
+                ),
+              ),
+
               pw.Spacer(),
               pw.Divider(color: borderColor),
               pw.Center(
@@ -227,7 +266,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               pw.SizedBox(height: 4),
               pw.Center(
                 child: pw.Text(
-                  'Website: https://nailauraofficial.com | Contact: +91 9567112567',
+                  'Website: https://nailauraofficial.com | Contact: +91 8281791180',
                   style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
                 ),
               ),
@@ -277,7 +316,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                   _buildExperienceSurveyCard(),
                   const SizedBox(height: 16),
 
-                  // 4. Main Tax Invoice Receipt Card
+                  // 4. Main Invoice Receipt Card
                   _buildInvoiceCard(),
                   const SizedBox(height: 16),
 
@@ -366,7 +405,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Kowdiar / Lulu Mall, Thiruvananthapuram',
+                        'Kulathoor, Trivandrum - 695583',
                         style: GoogleFonts.montserrat(
                           color: Colors.white.withValues(alpha: 0.6),
                           fontSize: 11,
@@ -526,34 +565,34 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Studio Registration Title
+          // Studio Title
           Center(
             child: Column(
               children: [
                 Text(
-                  "Nailaura Studio Pvt Ltd",
+                  "Nailaura - The Nailart Studio",
                   style: GoogleFonts.cormorantGaramond(
                     color: Colors.black,
-                    fontSize: 22,
+                    fontSize: 24,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "Place Of Supply: Nailaura - Kowdiar, Thiruvananthapuram, Kerala - 695003",
+                  "Kulathoor, Trivandrum - 695583",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
                     color: Colors.black87,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  "GSTIN NO : 32AAAAX0000A1Z5",
+                  "Ph: +91 8281791180",
                   style: GoogleFonts.montserrat(
                     color: Colors.black,
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -564,10 +603,10 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
           _buildDashedLine(),
           const SizedBox(height: 12),
 
-          // TAX INVOICE Header
+          // INVOICE RECEIPT Header
           Center(
             child: Text(
-              "TAX INVOICE",
+              "INVOICE RECEIPT",
               style: GoogleFonts.montserrat(
                 color: Colors.black,
                 fontSize: 14,
@@ -662,14 +701,8 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
           _buildDashedLine(),
           const SizedBox(height: 16),
 
-          // Financial Summary
-          _buildSummaryRow("Gross Total:", "₹${totalAmount.toStringAsFixed(2)}"),
-          const SizedBox(height: 4),
-          _buildSummaryRow("Taxable Value:", "₹${taxableValue.toStringAsFixed(2)}"),
-          const SizedBox(height: 4),
-          _buildSummaryRow("CGST @ 2.5%:", "₹${cgst.toStringAsFixed(2)}"),
-          const SizedBox(height: 4),
-          _buildSummaryRow("SGST @ 2.5%:", "₹${sgst.toStringAsFixed(2)}"),
+          // Financial Summary (No Tax Fields)
+          _buildSummaryRow("Subtotal:", "₹${totalAmount.toStringAsFixed(2)}"),
           const SizedBox(height: 8),
           _buildDashedLine(),
           const SizedBox(height: 12),
@@ -737,7 +770,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  "Need help? Reach us at support@nailauraofficial.com",
+                  "Need help? Reach us at +91 8281791180",
                   style: GoogleFonts.montserrat(color: Colors.black54, fontSize: 11, fontWeight: FontWeight.w500),
                 ),
               ],
@@ -845,20 +878,25 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "TERMS & CONDITIONS",
-            style: GoogleFonts.montserrat(
-              color: AppTheme.primaryGold,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.5,
-            ),
+          Row(
+            children: [
+              const Icon(Icons.verified_outlined, color: AppTheme.primaryGold, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                "15-DAY SERVICE WARRANTY & POLICY",
+                style: GoogleFonts.montserrat(
+                  color: AppTheme.primaryGold,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.5,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 10),
-          _buildBulletPoint("All offers are subject to applicable T&C."),
-          _buildBulletPoint("Please retain this digital receipt for touch-ups or warranty inquiries within 7 days of service."),
-          _buildBulletPoint("Completed nail art and extensions are non-refundable."),
-          _buildBulletPoint("We reserve the right to alter/modify T&C at any point without prior notice."),
+          const SizedBox(height: 12),
+          _buildBulletPoint("We provide an exclusive 15-day service warranty on gel extensions and structured nail art."),
+          _buildBulletPoint("Please retain this digital receipt for touch-ups or warranty inquiries within 15 days."),
+          _buildBulletPoint("Services performed are non-refundable after service completion."),
         ],
       ),
     );
@@ -913,7 +951,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
             Expanded(
               child: OutlinedButton.icon(
                 onPressed: () async {
-                  final text = "Check out my Nailaura invoice: https://nailauraofficial.com/#/invoice?inv=$invoiceNumber&name=${Uri.encodeComponent(customerName)}&phone=$phone&date=${Uri.encodeComponent(dateStr)}&total=$totalStr&items=${Uri.encodeComponent(rawItems)}";
+                  final text = "Check out my Nailaura receipt: https://nailauraofficial.com/#/invoice?inv=$invoiceNumber&name=${Uri.encodeComponent(customerName)}&phone=$phone&date=${Uri.encodeComponent(dateStr)}&total=$totalStr&items=${Uri.encodeComponent(rawItems)}";
                   final url = Uri.parse("https://wa.me/?text=${Uri.encodeComponent(text)}");
                   if (await canLaunchUrl(url)) launchUrl(url);
                 },
