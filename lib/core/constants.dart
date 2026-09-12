@@ -19,6 +19,7 @@ class AppConstants {
   static const String strengtheningImage = 'assets/images/gel.png';
   static const String cuticleCareImage = 'assets/images/extensions.png';
   static const String studioBannerImage = 'assets/images/studio_banner.png';
+  static const String studioBgImage = 'assets/images/studio_bg.jpg';
   static const String portfolioImage1 = 'assets/images/portfolio_new1.jpg';
   static const String portfolioImage2 = 'assets/images/portfolio_new2.jpg';
   static const String portfolioImage3 = 'assets/images/portfolio_new3.jpg';

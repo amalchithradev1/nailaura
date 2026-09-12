@@ -33,7 +33,7 @@ class NavBar extends StatelessWidget {
           height: isScrolled ? 64 : 70,
           padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 0),
           decoration: BoxDecoration(
-            color: isScrolled ? AppTheme.backgroundCream.withOpacity(0.85) : Colors.transparent,
+            color: AppTheme.backgroundCream,
             boxShadow: isScrolled
                 ? [
                     BoxShadow(
@@ -125,7 +125,7 @@ class NavBar extends StatelessWidget {
           height: isScrolled ? 60 : 70,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
           decoration: BoxDecoration(
-            color: isScrolled ? AppTheme.backgroundCream.withOpacity(0.85) : Colors.transparent,
+            color: AppTheme.backgroundCream,
             boxShadow: isScrolled
                 ? [
                     BoxShadow(
@@ -168,14 +168,12 @@ class NavBar extends StatelessWidget {
               AppConstants.logoIcon,
               height: isScrolled ? 36 : 42,
               fit: BoxFit.contain,
-              color: AppTheme.textDark, // Sharp editorial black on sand background
             ),
             const SizedBox(width: 12),
             Image.asset(
               AppConstants.logoTextGold,
               height: isScrolled ? 32 : 38,
               fit: BoxFit.contain,
-              color: AppTheme.textDark, // Sharp editorial black on sand background
             ),
           ],
         ),

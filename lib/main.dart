@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'core/theme.dart';
 import 'screens/home_screen.dart';
+import 'screens/invoice_screen.dart';
 
 void main() {
   runApp(const NailauraApp());
@@ -15,7 +16,20 @@ class NailauraApp extends StatelessWidget {
       title: 'Nailaura | The Nailart Studio',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const HomeScreen(),
+      onGenerateRoute: (settings) {
+        final name = settings.name ?? '';
+        if (name.contains('invoice')) {
+          final uri = Uri.parse(name);
+          return MaterialPageRoute(
+            builder: (context) => InvoiceScreen(queryParams: uri.queryParameters),
+            settings: settings,
+          );
+        }
+        return MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+          settings: settings,
+        );
+      },
     );
   }
 }
