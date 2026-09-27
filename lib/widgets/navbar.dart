@@ -1,305 +1,238 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../core/constants.dart';
 import '../core/theme.dart';
 import '../core/utils.dart';
+import 'common.dart';
 
+/// Fixed top bar: transparent over the hero, solid black once scrolled.
 class NavBar extends StatelessWidget {
   final bool isScrolled;
-  final Function(String)? onNavTap;
-  const NavBar({Key? key, this.isScrolled = false, this.onNavTap}) : super(key: key);
+  final void Function(String link) onNavTap;
+  final VoidCallback onMenuTap;
+
+  const NavBar({
+    super.key,
+    required this.isScrolled,
+    required this.onNavTap,
+    required this.onMenuTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (constraints.maxWidth > 800) {
-          return _buildDesktopNav(context);
-        } else {
-          return _buildMobileNav(context);
-        }
-      },
-    );
-  }
-
-  Widget _buildDesktopNav(BuildContext context) {
+    final compact = MediaQuery.sizeOf(context).width < 1000;
     return ClipRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: isScrolled ? 12.0 : 0.0, sigmaY: isScrolled ? 12.0 : 0.0),
+        filter: ImageFilter.blur(
+          sigmaX: isScrolled ? 14 : 0,
+          sigmaY: isScrolled ? 14 : 0,
+        ),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          height: isScrolled ? 64 : 70,
-          padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 0),
+          duration: const Duration(milliseconds: 350),
+          height: isScrolled ? 70 : 92,
+          padding: EdgeInsets.symmetric(horizontal: Responsive.gutter(context)),
           decoration: BoxDecoration(
-            color: AppTheme.backgroundCream,
-            boxShadow: isScrolled
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
-                      blurRadius: 15,
-                      offset: const Offset(0, 4),
-                    ),
-                  ]
-                : [],
-          ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _buildLogo(context),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ...AppConstants.navLinks.map(
-                (link) => Padding(
-                  padding: const EdgeInsets.only(left: 22),
-                  child: TextButton(
-                    onPressed: () {
-                      if (onNavTap != null) onNavTap!(link);
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppTheme.textDark,
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    ),
-                    child: Text(
-                      link,
-                      style: GoogleFonts.montserrat(
-                        color: AppTheme.textDark,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ),
+            color: isScrolled
+                ? AppTheme.ink.withValues(alpha: 0.92)
+                : Colors.transparent,
+            border: Border(
+              bottom: BorderSide(
+                color: AppTheme.primaryGold.withValues(alpha: isScrolled ? 0.25 : 0),
               ),
-              const SizedBox(width: 26),
-              InkWell(
-                onTap: () {
-                  Utils.showBookingOptions(context);
-                },
-                borderRadius: BorderRadius.circular(30),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.buttonDark,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.15),
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    'Book now',
-                    style: GoogleFonts.montserrat(
-                      color: AppTheme.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
+            ),
+          ),
+          child: Row(
+            children: [
+              _Logo(compact: isScrolled, onTap: () => onNavTap('Home')),
+              const Spacer(),
+              if (!compact) ...[
+                for (final link in AppConstants.navLinks)
+                  _NavLink(label: link, onTap: () => onNavTap(link)),
+                const SizedBox(width: 24),
+                NailauraButton(
+                  label: 'BOOK NOW',
+                  onTap: () => Utils.showBookingOptions(context),
                 ),
-              )
-                  .animate(onPlay: (c) => c.repeat(reverse: true))
-                  .scale(begin: const Offset(1.0, 1.0), end: const Offset(1.04, 1.04), duration: 1800.ms),
+              ] else
+                IconButton(
+                  onPressed: onMenuTap,
+                  icon: const Icon(Icons.menu, color: AppTheme.white, size: 28),
+                ),
             ],
           ),
-        ],
+        ),
       ),
-    ),
-  ),
-);
+    );
+  }
 }
 
-  Widget _buildMobileNav(BuildContext context) {
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: isScrolled ? 12.0 : 0.0, sigmaY: isScrolled ? 12.0 : 0.0),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          height: isScrolled ? 60 : 70,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
-          decoration: BoxDecoration(
-            color: AppTheme.backgroundCream,
-            boxShadow: isScrolled
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ]
-                : [],
-          ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildLogo(context),
-          IconButton(
-            icon: const Icon(Icons.menu, color: AppTheme.textDark, size: 28),
-            onPressed: () {
-              Scaffold.of(context).openEndDrawer();
-            },
-          ),
-        ],
-      ),
-    ),
-  ),
-);
-}
+class _Logo extends StatelessWidget {
+  final bool compact;
+  final VoidCallback onTap;
+  const _Logo({required this.compact, required this.onTap});
 
-  Widget _buildLogo(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: InkWell(
-        onTap: () {
-          if (onNavTap != null) onNavTap!('Home');
-        },
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset(
-              AppConstants.logoIcon,
-              height: isScrolled ? 36 : 42,
-              fit: BoxFit.contain,
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 350),
+              height: compact ? 38 : 46,
+              child: Image.asset(AppConstants.logoIcon, fit: BoxFit.contain),
             ),
             const SizedBox(width: 12),
-            Image.asset(
-              AppConstants.logoTextGold,
-              height: isScrolled ? 32 : 38,
-              fit: BoxFit.contain,
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 350),
+              height: compact ? 32 : 40,
+              child: Image.asset(AppConstants.logoTextGold, fit: BoxFit.contain),
             ),
           ],
         ),
       ),
     );
   }
-
-
 }
 
-class MobileDrawer extends StatelessWidget {
-  final Function(String)? onNavTap;
-  const MobileDrawer({Key? key, this.onNavTap}) : super(key: key);
+class _NavLink extends StatefulWidget {
+  final String label;
+  final VoidCallback onTap;
+  const _NavLink({required this.label, required this.onTap});
 
-  IconData _getIconForLink(String link) {
-    switch (link) {
-      case 'Home': return Icons.home_outlined;
-      case 'Services': return Icons.spa_outlined;
-      case 'About':
-      case 'About Us': return Icons.info_outline;
-      case 'Contact': return Icons.phone_outlined;
-      default: return Icons.circle_outlined;
-    }
+  @override
+  State<_NavLink> createState() => _NavLinkState();
+}
+
+class _NavLinkState extends State<_NavLink> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.label.toUpperCase(),
+                style: AppText.eyebrow(
+                  color: _hover ? AppTheme.primaryGold : AppTheme.white,
+                  size: 11.5,
+                ).copyWith(letterSpacing: 2.5),
+              ),
+              const SizedBox(height: 6),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                width: _hover ? 22 : 0,
+                height: 1,
+                color: AppTheme.primaryGold,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
+}
+
+/// Full-height menu for phones and tablets.
+class MobileDrawer extends StatelessWidget {
+  final void Function(String link) onNavTap;
+  const MobileDrawer({super.key, required this.onNavTap});
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: AppTheme.textDark, // Elegant dark theme
+      backgroundColor: AppTheme.ink,
+      shape: const RoundedRectangleBorder(),
+      width: MediaQuery.sizeOf(context).width < 500
+          ? MediaQuery.sizeOf(context).width
+          : 420,
       child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 40),
-            // Header Logo
-            Padding(
-              padding: const EdgeInsets.only(left: 32.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Row(
-                  children: [
-                    Image.asset(
-                      AppConstants.logoIcon,
-                      height: 42,
-                      fit: BoxFit.contain,
-                    ),
-                    const SizedBox(width: 12),
-                    Image.asset(
-                      AppConstants.logoTextGold,
-                      height: 36,
-                      fit: BoxFit.contain,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 60),
-            
-            // Navigation Links
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                children: AppConstants.navLinks.map((link) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 32.0),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.pop(context); // Close drawer
-                        if (onNavTap != null) onNavTap!(link);
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            link,
-                            style: GoogleFonts.cormorantGaramond(
-                              color: AppTheme.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Icon(_getIconForLink(link), color: AppTheme.primaryGold, size: 20),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-
-            // Bottom Actions
-            Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Column(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Utils.showBookingOptions(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryGold,
-                        foregroundColor: AppTheme.white,
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        'BOOK APPOINTMENT',
-                        style: GoogleFonts.montserrat(
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                    ),
+                  Image.asset(AppConstants.logoIcon, height: 40),
+                  const SizedBox(width: 10),
+                  Image.asset(AppConstants.logoTextGold, height: 34),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close, color: AppTheme.white, size: 28),
                   ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 50),
+              Expanded(
+                child: ListView(
+                  children: [
+                    for (var i = 0; i < AppConstants.navLinks.length; i++)
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                          onNavTap(AppConstants.navLinks[i]);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          child: Row(
+                            children: [
+                              Text(
+                                '0${i + 1}',
+                                style: AppText.serif(
+                                  size: 18,
+                                  color: AppTheme.primaryGold,
+                                  style: FontStyle.italic,
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                              Text(
+                                AppConstants.navLinks[i].toUpperCase(),
+                                style: AppText.heading(size: 20, color: AppTheme.white)
+                                    .copyWith(letterSpacing: 5),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Text('Book your visit', style: AppText.script(size: 40)),
+              const SizedBox(height: 18),
+              SizedBox(
+                width: double.infinity,
+                child: NailauraButton(
+                  label: 'BOOK APPOINTMENT',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Utils.showBookingOptions(context);
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'TUE – SUN  •  10 AM – 7 PM',
+                style: AppText.eyebrow(
+                  color: AppTheme.white.withValues(alpha: 0.5),
+                  size: 10,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

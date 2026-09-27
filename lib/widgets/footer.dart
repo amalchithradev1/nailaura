@@ -1,169 +1,162 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../core/theme.dart';
 import '../core/constants.dart';
+import '../core/theme.dart';
+import '../core/utils.dart';
+import 'common.dart';
 
 class Footer extends StatelessWidget {
-  const Footer({Key? key}) : super(key: key);
+  final void Function(String link) onNavTap;
+  const Footer({super.key, required this.onNavTap});
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width <= 800;
-    
+    final mobile = Responsive.isMobile(context);
     return Container(
-      width: double.infinity,
-      color: AppTheme.textDark,
-      padding: EdgeInsets.symmetric(horizontal: isMobile ? 24 : 64, vertical: 48),
-      child: isMobile
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: _buildFooterContent(context, true)
-                  .map(
-                    (widget) => Padding(
-                      padding: const EdgeInsets.only(bottom: 32),
-                      child: widget,
-                    ),
-                  )
-                  .toList(),
-            )
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: _buildFooterContent(context, false),
-            ),
-    );
-  }
-
-  Widget _wrapExpanded({required int flex, required bool isMobile, required Widget child}) {
-    if (isMobile) return child;
-    return Expanded(flex: flex, child: child);
-  }
-
-  List<Widget> _buildFooterContent(BuildContext context, bool isMobile) {
-    return [
-      // Column 1: Brand
-      _wrapExpanded(
-        flex: 2,
-        isMobile: isMobile,
+      color: AppTheme.ink,
+      padding: EdgeInsets.only(top: mobile ? 80 : 110, bottom: 36),
+      child: ContentWidth(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            Image.asset(AppConstants.logoIcon, height: mobile ? 64 : 80),
+            const SizedBox(height: 16),
+            Image.asset(AppConstants.logoTextGold, height: mobile ? 40 : 52),
+            const SizedBox(height: 28),
+            const ZigZagDivider(),
+            const SizedBox(height: 28),
+            Text(
+              'Where every nail tells a story',
+              textAlign: TextAlign.center,
+              style: AppText.script(size: mobile ? 36 : 46),
+            ),
+            const SizedBox(height: 44),
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: mobile ? 22 : 40,
+              runSpacing: 16,
               children: [
-                Image.asset(
-                  AppConstants.logoIcon,
-                  height: 48,
-                  fit: BoxFit.contain,
+                for (final link in AppConstants.navLinks)
+                  _FooterLink(label: link.toUpperCase(), onTap: () => onNavTap(link)),
+              ],
+            ),
+            const SizedBox(height: 40),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _Social(
+                  icon: Icons.camera_alt_outlined,
+                  tooltip: 'Instagram',
+                  onTap: () => Utils.openUrl(AppConstants.instagramUrl),
                 ),
                 const SizedBox(width: 14),
-                Flexible(
-                  child: Image.asset(
-                    AppConstants.logoTextGold,
-                    height: 40,
-                    fit: BoxFit.contain,
-                  ),
+                const _Social(
+                  icon: Icons.chat_bubble_outline,
+                  tooltip: 'WhatsApp',
+                  onTap: Utils.launchWhatsApp,
+                ),
+                const SizedBox(width: 14),
+                const _Social(
+                  icon: Icons.phone_outlined,
+                  tooltip: 'Call',
+                  onTap: Utils.launchPhone,
+                ),
+                const SizedBox(width: 14),
+                const _Social(
+                  icon: Icons.mail_outline,
+                  tooltip: 'Email',
+                  onTap: Utils.launchEmail,
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 60),
+            Container(height: 1, color: AppTheme.white.withValues(alpha: 0.08)),
+            const SizedBox(height: 26),
             Text(
-              'Precision craftsmanship meets luxury. Specializing in flawless dry manicures, structured gel extensions, and bespoke nail artistry to elevate your aura.',
-              style: GoogleFonts.montserrat(
-                color: AppTheme.white.withOpacity(0.7),
-                fontSize: 14,
-                height: 1.5,
-              ),
+              '© ${DateTime.now().year} NAILAURA  •  THE NAILART STUDIO  •  TRIVANDRUM',
+              textAlign: TextAlign.center,
+              style: AppText.eyebrow(
+                color: AppTheme.white.withValues(alpha: 0.4),
+                size: 10,
+              ).copyWith(letterSpacing: 2.5, height: 1.8),
             ),
           ],
         ),
       ),
-      if (!isMobile) const SizedBox(width: 32),
-      // Column 2: Links
-      _wrapExpanded(
-        flex: 1,
-        isMobile: isMobile,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Quick Links',
-              style: GoogleFonts.montserrat(
-                color: AppTheme.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildFooterLink('Services'),
-            _buildFooterLink('About Us'),
-            _buildFooterLink('Contact'),
-            _buildFooterLink('Booking Policy'),
-          ],
-        ),
-      ),
-      if (!isMobile) const SizedBox(width: 32),
-      // Column 3: Contact
-      _wrapExpanded(
-        flex: 1,
-        isMobile: isMobile,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Contact Us',
-              style: GoogleFonts.montserrat(
-                color: AppTheme.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildContactInfo(
-              Icons.location_on,
-              'Kulathoor, Thiruvananthapuram,\nKerala 695583',
-            ),
-            const SizedBox(height: 8),
-            _buildContactInfo(Icons.phone, '+91 8281791180'),
-            const SizedBox(height: 8),
-            _buildContactInfo(Icons.email, 'thenailauraofficial@gmail.com'),
-          ],
-        ),
-      ),
-    ];
+    );
   }
+}
 
-  Widget _buildFooterLink(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: InkWell(
-        onTap: () {},
+class _FooterLink extends StatefulWidget {
+  final String label;
+  final VoidCallback onTap;
+  const _FooterLink({required this.label, required this.onTap});
+
+  @override
+  State<_FooterLink> createState() => _FooterLinkState();
+}
+
+class _FooterLinkState extends State<_FooterLink> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
         child: Text(
-          text,
-          style: GoogleFonts.montserrat(
-            color: AppTheme.white.withOpacity(0.7),
-            fontSize: 14,
+          widget.label,
+          style: AppText.eyebrow(
+            color: _hover ? AppTheme.primaryGold : AppTheme.white.withValues(alpha: 0.75),
+            size: 11,
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildContactInfo(IconData icon, String text) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, color: AppTheme.primaryGold, size: 16),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            text,
-            style: GoogleFonts.montserrat(
-              color: AppTheme.white.withOpacity(0.7),
-              fontSize: 14,
+class _Social extends StatefulWidget {
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+  const _Social({required this.icon, required this.tooltip, required this.onTap});
+
+  @override
+  State<_Social> createState() => _SocialState();
+}
+
+class _SocialState extends State<_Social> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: widget.tooltip,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _hover ? AppTheme.primaryGold : Colors.transparent,
+              border: Border.all(color: AppTheme.primaryGold.withValues(alpha: 0.6)),
+            ),
+            child: Icon(
+              widget.icon,
+              size: 18,
+              color: _hover ? AppTheme.ink : AppTheme.primaryGold,
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 }

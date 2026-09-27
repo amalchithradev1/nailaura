@@ -104,7 +104,7 @@ class Utils {
                   badgeText: 'INSTANT',
                   onTap: () {
                     Navigator.pop(context);
-                    _launchWhatsApp();
+                    launchWhatsApp();
                   },
                 ),
                 const SizedBox(height: 14),
@@ -115,7 +115,7 @@ class Utils {
                   badgeText: 'DIRECT',
                   onTap: () {
                     Navigator.pop(context);
-                    _launchPhone();
+                    launchPhone();
                   },
                 ),
                 const SizedBox(height: 14),
@@ -126,7 +126,7 @@ class Utils {
                   badgeText: 'INQUIRE',
                   onTap: () {
                     Navigator.pop(context);
-                    _launchEmail();
+                    launchEmail();
                   },
                 ),
                 const SizedBox(height: 32),
@@ -151,7 +151,16 @@ class Utils {
 
   // --- URL Launchers ---
 
-  static Future<void> _launchWhatsApp() async {
+  static Future<void> openUrl(String link) async {
+    final url = Uri.parse(link);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint("Could not launch $link");
+    }
+  }
+
+  static Future<void> launchWhatsApp() async {
     final message = Uri.encodeComponent(
         "Hello nailaura ✧\n\nI would love to schedule an appointment. Could you please let me know your availability?\n\nThank you!");
     final cleanPhone = studioPhone.replaceAll(RegExp(r'\D'), '');
@@ -163,7 +172,7 @@ class Utils {
     }
   }
 
-  static Future<void> _launchPhone() async {
+  static Future<void> launchPhone() async {
     final url = Uri.parse('tel:$studioPhone');
     if (await canLaunchUrl(url)) {
       await launchUrl(url);
@@ -172,7 +181,7 @@ class Utils {
     }
   }
 
-  static Future<void> _launchEmail() async {
+  static Future<void> launchEmail() async {
     final body = Uri.encodeComponent(
         "Hello Nailaura ✧\n\nI would love to schedule an appointment. Could you please let me know your availability?\n\nThank you!");
     final url = Uri.parse('mailto:$studioEmail?subject=Appointment%20Booking&body=$body');
