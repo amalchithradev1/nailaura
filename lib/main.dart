@@ -13,7 +13,7 @@ class NailauraApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Nailaura | The Nailart Studio',
+      title: 'Nailaura - The Nail Art Studio | Nail Art Salon in Kulathoor, Trivandrum',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       onGenerateRoute: (settings) {

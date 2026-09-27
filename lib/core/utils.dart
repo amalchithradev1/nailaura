@@ -132,7 +132,7 @@ class Utils {
                 const SizedBox(height: 32),
                 Center(
                   child: Text(
-                    'STUDIO HOURS: TUESDAY – SUNDAY · 10:00 AM – 7:00 PM',
+                    'STUDIO HOURS: OPEN DAILY · 10:00 AM – 10:00 PM',
                     style: GoogleFonts.montserrat(
                       color: AppTheme.white.withOpacity(0.35),
                       fontSize: 10,

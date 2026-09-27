@@ -46,8 +46,7 @@ class AppConstants {
   // Links
   static const String instagramHandle = '@nailauraofficial_';
   static const String instagramUrl = 'https://www.instagram.com/nailauraofficial_';
-  static const String mapsUrl =
-      'https://www.google.com/maps/search/?api=1&query=Nailaura+Nail+Art+Studio+Kulathoor+Thiruvananthapuram';
+  static const String mapsUrl = 'https://maps.app.goo.gl/oFr2RoLQiz7USnc38';
 
   // Studio details
   static const String address = 'Kulathoor, Thiruvananthapuram,\nKerala 695583';

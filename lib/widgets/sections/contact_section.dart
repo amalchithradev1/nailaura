@@ -28,8 +28,7 @@ class ContactSection extends StatelessWidget {
       _Column(
         title: 'WORKING HOURS',
         children: const [
-          _Hours(day: 'Tuesday – Sunday', time: '10:00 AM – 7:00 PM'),
-          _Hours(day: 'Monday', time: 'Closed'),
+          _Hours(day: 'Open all 7 days', time: '10:00 AM – 10:00 PM'),
           SizedBox(height: 8),
         ],
       ),

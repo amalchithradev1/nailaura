@@ -1,11 +1,11 @@
 {
-    "name": "nailauraweb",
-    "short_name": "nailauraweb",
+    "name": "Nailaura - The Nail Art Studio",
+    "short_name": "Nailaura",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0C0B0A",
+    "theme_color": "#0C0B0A",
+    "description": "Nail art studio in Kulathoor, Trivandrum: gel polish, gel and polygel extensions and custom nail art.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

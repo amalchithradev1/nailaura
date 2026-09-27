@@ -225,7 +225,7 @@ class MobileDrawer extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                'TUE – SUN  •  10 AM – 7 PM',
+                'OPEN DAILY  •  10 AM – 10 PM',
                 style: AppText.eyebrow(
                   color: AppTheme.white.withValues(alpha: 0.5),
                   size: 10,
