@@ -7,6 +7,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:nailauraweb/core/constants.dart';
+import 'package:nailauraweb/core/invoice_lookup.dart';
 import 'package:nailauraweb/core/theme.dart';
 
 class InvoiceScreen extends StatefulWidget {
@@ -22,12 +23,47 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   int? _selectedRating; // 0 = Most Likely, 1 = Probably, 2 = Least Likely
   bool _ratingSubmitted = false;
 
-  String get invoiceNumber => widget.queryParams['inv'] ?? 'INV-1000';
-  String get customerName => widget.queryParams['name'] ?? 'Valued Customer';
-  String get phone => widget.queryParams['phone'] ?? '+91 ----------';
-  String get dateStr => widget.queryParams['date'] ?? '12/09/2026';
-  String get totalStr => widget.queryParams['total'] ?? '0.00';
-  String get rawItems => widget.queryParams['items'] ?? '';
+  /// Invoice details: straight from the link (older links) or loaded by ID.
+  Map<String, String>? _fields;
+  String? _loadError;
+
+  String? get _invoiceId => widget.queryParams['id'];
+
+  @override
+  void initState() {
+    super.initState();
+    final id = _invoiceId;
+    if (id == null) {
+      _fields = widget.queryParams;
+    } else {
+      InvoiceLookup.fetch(id).then(
+        (f) => mounted ? setState(() => _fields = f) : null,
+        onError: (e) => mounted
+            ? setState(() => _loadError = e is FormatException ? e.message : 'Could not load this invoice. Please try again.')
+            : null,
+      );
+    }
+  }
+
+  Map<String, String> get _p => _fields ?? const {};
+  double get discount => double.tryParse(_p['discount'] ?? '') ?? 0;
+  double get subtotal => double.tryParse(_p['subtotal'] ?? '') ?? totalAmount;
+  String get paymentLabel => switch (_p['payment']) {
+        'upi' => 'UPI',
+        'card' => 'Card',
+        'cash' => 'Cash',
+        _ => '',
+      };
+  String get shareLink => _invoiceId != null
+      ? 'https://nailauraofficial.com/#/invoice?id=$_invoiceId'
+      : 'https://nailauraofficial.com/#/invoice?inv=$invoiceNumber&name=${Uri.encodeComponent(customerName)}&phone=$phone&date=${Uri.encodeComponent(dateStr)}&total=$totalStr&items=${Uri.encodeComponent(rawItems)}';
+
+  String get invoiceNumber => _p['inv'] ?? 'INV-1000';
+  String get customerName => _p['name'] ?? 'Valued Customer';
+  String get phone => _p['phone'] ?? '+91 ----------';
+  String get dateStr => _p['date'] ?? '';
+  String get totalStr => _p['total'] ?? '0.00';
+  String get rawItems => _p['items'] ?? '';
 
   List<Map<String, String>> get itemsList {
     if (rawItems.isEmpty) {
@@ -216,9 +252,25 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           children: [
                             pw.Text('Subtotal:', style: const pw.TextStyle(fontSize: 10)),
-                            pw.Text('Rs. ${totalAmount.toStringAsFixed(2)}', style: const pw.TextStyle(fontSize: 10)),
+                            pw.Text('Rs. ${subtotal.toStringAsFixed(2)}', style: const pw.TextStyle(fontSize: 10)),
                           ],
                         ),
+                        if (discount > 0)
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                            children: [
+                              pw.Text('Discount:', style: const pw.TextStyle(fontSize: 10)),
+                              pw.Text('- Rs. ${discount.toStringAsFixed(2)}', style: const pw.TextStyle(fontSize: 10)),
+                            ],
+                          ),
+                        if (paymentLabel.isNotEmpty)
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                            children: [
+                              pw.Text('Paid by:', style: const pw.TextStyle(fontSize: 10)),
+                              pw.Text(paymentLabel, style: const pw.TextStyle(fontSize: 10)),
+                            ],
+                          ),
                         pw.Divider(color: borderColor),
                         pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -290,6 +342,37 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 768;
+
+    if (_fields == null) {
+      return Scaffold(
+        backgroundColor: const Color(0xFF0F0F10),
+        body: Center(
+          child: _loadError == null
+              ? const CircularProgressIndicator(color: AppTheme.primaryGold)
+              : Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.receipt_long_outlined, color: AppTheme.primaryGold, size: 48),
+                      const SizedBox(height: 16),
+                      Text(
+                        _loadError!,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.montserrat(color: Colors.white, fontSize: 16),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Contact the studio on +91 8281791180 for a copy.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.montserrat(color: Colors.white.withValues(alpha: 0.6), fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFF0F0F10),
@@ -663,7 +746,15 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
           const SizedBox(height: 16),
 
           // Financial Summary (No Tax Fields)
-          _buildSummaryRow("Subtotal:", "₹${totalAmount.toStringAsFixed(2)}"),
+          _buildSummaryRow("Subtotal:", "₹${subtotal.toStringAsFixed(2)}"),
+          if (discount > 0) ...[
+            const SizedBox(height: 6),
+            _buildSummaryRow("Discount:", "-₹${discount.toStringAsFixed(2)}"),
+          ],
+          if (paymentLabel.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            _buildSummaryRow("Paid by:", paymentLabel),
+          ],
           const SizedBox(height: 8),
           _buildDashedLine(),
           const SizedBox(height: 12),
@@ -912,7 +1003,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
             Expanded(
               child: OutlinedButton.icon(
                 onPressed: () async {
-                  final text = "Check out my Nailaura receipt: https://nailauraofficial.com/#/invoice?inv=$invoiceNumber&name=${Uri.encodeComponent(customerName)}&phone=$phone&date=${Uri.encodeComponent(dateStr)}&total=$totalStr&items=${Uri.encodeComponent(rawItems)}";
+                  final text = "Check out my Nailaura receipt: $shareLink";
                   final url = Uri.parse("https://wa.me/?text=${Uri.encodeComponent(text)}");
                   if (await canLaunchUrl(url)) launchUrl(url);
                 },
