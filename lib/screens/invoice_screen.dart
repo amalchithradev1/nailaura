@@ -1,5 +1,10 @@
 import 'dart:typed_data';
+import 'dart:js_interop';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:web/web.dart' as web;
+import 'package:nailauraweb/widgets/loyalty_card.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pdf/pdf.dart';
@@ -39,7 +44,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
       InvoiceLookup.fetch(id).then(
         (f) => mounted ? setState(() => _fields = f) : null,
         onError: (e) => mounted
-            ? setState(() => _loadError = e is FormatException ? e.message : 'Could not load this invoice. Please try again.')
+            ? setState(
+                () => _loadError = e is FormatException
+                    ? e.message
+                    : 'Could not load this invoice. Please try again.',
+              )
             : null,
       );
     }
@@ -49,11 +58,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   double get discount => double.tryParse(_p['discount'] ?? '') ?? 0;
   double get subtotal => double.tryParse(_p['subtotal'] ?? '') ?? totalAmount;
   String get paymentLabel => switch (_p['payment']) {
-        'upi' => 'UPI',
-        'card' => 'Card',
-        'cash' => 'Cash',
-        _ => '',
-      };
+    'upi' => 'UPI',
+    'card' => 'Card',
+    'cash' => 'Cash',
+    _ => '',
+  };
   String get shareLink => _invoiceId != null
       ? 'https://nailauraofficial.com/#/invoice?id=$_invoiceId'
       : 'https://nailauraofficial.com/#/invoice?inv=$invoiceNumber&name=${Uri.encodeComponent(customerName)}&phone=$phone&date=${Uri.encodeComponent(dateStr)}&total=$totalStr&items=${Uri.encodeComponent(rawItems)}';
@@ -68,7 +77,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   List<Map<String, String>> get itemsList {
     if (rawItems.isEmpty) {
       return [
-        {'name': 'Luxury Nail Art Service', 'price': totalStr}
+        {'name': 'Luxury Nail Art Service', 'price': totalStr},
       ];
     }
 
@@ -95,8 +104,12 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     pw.MemoryImage? logoIconImage;
     pw.MemoryImage? logoTextImage;
     try {
-      final iconData = await rootBundle.load('assets/images/logo_icon_gold.png');
-      final textData = await rootBundle.load('assets/images/logo_text_gold.png');
+      final iconData = await rootBundle.load(
+        'assets/images/logo_icon_gold.png',
+      );
+      final textData = await rootBundle.load(
+        'assets/images/logo_text_gold.png',
+      );
       logoIconImage = pw.MemoryImage(iconData.buffer.asUint8List());
       logoTextImage = pw.MemoryImage(textData.buffer.asUint8List());
     } catch (_) {}
@@ -122,9 +135,18 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                     pw.Row(
                       crossAxisAlignment: pw.CrossAxisAlignment.center,
                       children: [
-                        pw.Image(logoIconImage, width: 48, height: 48, fit: pw.BoxFit.contain),
+                        pw.Image(
+                          logoIconImage,
+                          width: 48,
+                          height: 48,
+                          fit: pw.BoxFit.contain,
+                        ),
                         pw.SizedBox(width: 12),
-                        pw.Image(logoTextImage, height: 36, fit: pw.BoxFit.contain),
+                        pw.Image(
+                          logoTextImage,
+                          height: 36,
+                          fit: pw.BoxFit.contain,
+                        ),
                       ],
                     )
                   else
@@ -154,7 +176,10 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                     crossAxisAlignment: pw.CrossAxisAlignment.end,
                     children: [
                       pw.Container(
-                        padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                        padding: const pw.EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 5,
+                        ),
                         decoration: pw.BoxDecoration(
                           color: PdfColor.fromHex('#F6EFD9'),
                           borderRadius: pw.BorderRadius.circular(6),
@@ -170,9 +195,25 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                         ),
                       ),
                       pw.SizedBox(height: 6),
-                      pw.Text('Invoice #: $invoiceNumber', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11)),
-                      pw.Text('Date: $dateStr', style: const pw.TextStyle(fontSize: 10)),
-                      pw.Text('Status: PAID', style: pw.TextStyle(fontSize: 10, color: PdfColor.fromHex('#2E7D32'), fontWeight: pw.FontWeight.bold)),
+                      pw.Text(
+                        'Invoice #: $invoiceNumber',
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                      pw.Text(
+                        'Date: $dateStr',
+                        style: const pw.TextStyle(fontSize: 10),
+                      ),
+                      pw.Text(
+                        'Status: PAID',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          color: PdfColor.fromHex('#2E7D32'),
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -180,7 +221,10 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               pw.SizedBox(height: 16),
               pw.Container(
                 width: double.infinity,
-                padding: const pw.EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                padding: const pw.EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 12,
+                ),
                 decoration: pw.BoxDecoration(
                   color: PdfColor.fromHex('#F9F6F0'),
                   borderRadius: pw.BorderRadius.circular(6),
@@ -189,8 +233,21 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 child: pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
-                    pw.Text('Location: Kulathoor, Trivandrum - 695583', style: const pw.TextStyle(fontSize: 9.5, color: PdfColors.grey800)),
-                    pw.Text('Phone: +91 8281791180', style: pw.TextStyle(fontSize: 9.5, fontWeight: pw.FontWeight.bold, color: darkGoldColor)),
+                    pw.Text(
+                      'Location: Kulathoor, Trivandrum - 695583',
+                      style: const pw.TextStyle(
+                        fontSize: 9.5,
+                        color: PdfColors.grey800,
+                      ),
+                    ),
+                    pw.Text(
+                      'Phone: +91 8281791180',
+                      style: pw.TextStyle(
+                        fontSize: 9.5,
+                        fontWeight: pw.FontWeight.bold,
+                        color: darkGoldColor,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -200,8 +257,17 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text('Customer Name: $customerName', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11)),
-                  pw.Text('Mobile: $phone', style: const pw.TextStyle(fontSize: 10)),
+                  pw.Text(
+                    'Customer Name: $customerName',
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 11,
+                    ),
+                  ),
+                  pw.Text(
+                    'Mobile: $phone',
+                    style: const pw.TextStyle(fontSize: 10),
+                  ),
                 ],
               ),
               pw.SizedBox(height: 14),
@@ -211,28 +277,73 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 border: pw.TableBorder.all(color: borderColor, width: 0.5),
                 children: [
                   pw.TableRow(
-                    decoration: pw.BoxDecoration(color: PdfColor.fromHex('#171719')),
+                    decoration: pw.BoxDecoration(
+                      color: PdfColor.fromHex('#171719'),
+                    ),
                     children: [
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('Service Description', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10, color: PdfColor.fromHex('#C5A059'))),
+                        child: pw.Text(
+                          'Service Description',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                            color: PdfColor.fromHex('#C5A059'),
+                          ),
+                        ),
                       ),
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('Qty', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10, color: PdfColors.white), textAlign: pw.TextAlign.center),
+                        child: pw.Text(
+                          'Qty',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                            color: PdfColors.white,
+                          ),
+                          textAlign: pw.TextAlign.center,
+                        ),
                       ),
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('Amount (Rs.)', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10, color: PdfColor.fromHex('#C5A059')), textAlign: pw.TextAlign.right),
+                        child: pw.Text(
+                          'Amount (Rs.)',
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 10,
+                            color: PdfColor.fromHex('#C5A059'),
+                          ),
+                          textAlign: pw.TextAlign.right,
+                        ),
                       ),
                     ],
                   ),
                   ...itemsList.map((item) {
                     return pw.TableRow(
                       children: [
-                        pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text(item['name'] ?? '', style: const pw.TextStyle(fontSize: 10))),
-                        pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('1', style: const pw.TextStyle(fontSize: 10), textAlign: pw.TextAlign.center)),
-                        pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('Rs. ${item['price']}', style: const pw.TextStyle(fontSize: 10), textAlign: pw.TextAlign.right)),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            item['name'] ?? '',
+                            style: const pw.TextStyle(fontSize: 10),
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            '1',
+                            style: const pw.TextStyle(fontSize: 10),
+                            textAlign: pw.TextAlign.center,
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            'Rs. ${item['price']}',
+                            style: const pw.TextStyle(fontSize: 10),
+                            textAlign: pw.TextAlign.right,
+                          ),
+                        ),
                       ],
                     );
                   }),
@@ -251,32 +362,65 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                         pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           children: [
-                            pw.Text('Subtotal:', style: const pw.TextStyle(fontSize: 10)),
-                            pw.Text('Rs. ${subtotal.toStringAsFixed(2)}', style: const pw.TextStyle(fontSize: 10)),
+                            pw.Text(
+                              'Subtotal:',
+                              style: const pw.TextStyle(fontSize: 10),
+                            ),
+                            pw.Text(
+                              'Rs. ${subtotal.toStringAsFixed(2)}',
+                              style: const pw.TextStyle(fontSize: 10),
+                            ),
                           ],
                         ),
                         if (discount > 0)
                           pw.Row(
-                            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment:
+                                pw.MainAxisAlignment.spaceBetween,
                             children: [
-                              pw.Text('Discount:', style: const pw.TextStyle(fontSize: 10)),
-                              pw.Text('- Rs. ${discount.toStringAsFixed(2)}', style: const pw.TextStyle(fontSize: 10)),
+                              pw.Text(
+                                'Discount:',
+                                style: const pw.TextStyle(fontSize: 10),
+                              ),
+                              pw.Text(
+                                '- Rs. ${discount.toStringAsFixed(2)}',
+                                style: const pw.TextStyle(fontSize: 10),
+                              ),
                             ],
                           ),
                         if (paymentLabel.isNotEmpty)
                           pw.Row(
-                            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment:
+                                pw.MainAxisAlignment.spaceBetween,
                             children: [
-                              pw.Text('Paid by:', style: const pw.TextStyle(fontSize: 10)),
-                              pw.Text(paymentLabel, style: const pw.TextStyle(fontSize: 10)),
+                              pw.Text(
+                                'Paid by:',
+                                style: const pw.TextStyle(fontSize: 10),
+                              ),
+                              pw.Text(
+                                paymentLabel,
+                                style: const pw.TextStyle(fontSize: 10),
+                              ),
                             ],
                           ),
                         pw.Divider(color: borderColor),
                         pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           children: [
-                            pw.Text('Total Amount:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12)),
-                            pw.Text('Rs. ${totalAmount.toStringAsFixed(2)}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: goldColor)),
+                            pw.Text(
+                              'Total Amount:',
+                              style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                            pw.Text(
+                              'Rs. ${totalAmount.toStringAsFixed(2)}',
+                              style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold,
+                                fontSize: 12,
+                                color: goldColor,
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -298,11 +442,36 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 child: pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
-                    pw.Text('15-DAY SERVICE WARRANTY POLICY', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9.5, color: darkGoldColor)),
+                    pw.Text(
+                      '15-DAY SERVICE WARRANTY POLICY',
+                      style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold,
+                        fontSize: 9.5,
+                        color: darkGoldColor,
+                      ),
+                    ),
                     pw.SizedBox(height: 4),
-                    pw.Text('• We provide an exclusive 15-day service warranty on gel extensions and structured nail art.', style: const pw.TextStyle(fontSize: 8.5, color: PdfColors.grey800)),
-                    pw.Text('• Please retain this digital receipt for touch-ups or warranty inquiries within 15 days.', style: const pw.TextStyle(fontSize: 8.5, color: PdfColors.grey800)),
-                    pw.Text('• Services performed are non-refundable after service completion.', style: const pw.TextStyle(fontSize: 8.5, color: PdfColors.grey800)),
+                    pw.Text(
+                      '• We provide an exclusive 15-day service warranty on gel extensions and structured nail art.',
+                      style: const pw.TextStyle(
+                        fontSize: 8.5,
+                        color: PdfColors.grey800,
+                      ),
+                    ),
+                    pw.Text(
+                      '• Please retain this digital receipt for touch-ups or warranty inquiries within 15 days.',
+                      style: const pw.TextStyle(
+                        fontSize: 8.5,
+                        color: PdfColors.grey800,
+                      ),
+                    ),
+                    pw.Text(
+                      '• Services performed are non-refundable after service completion.',
+                      style: const pw.TextStyle(
+                        fontSize: 8.5,
+                        color: PdfColors.grey800,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -312,14 +481,21 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               pw.Center(
                 child: pw.Text(
                   'Thank you for visiting Nailaura - The Nailart Studio!',
-                  style: pw.TextStyle(fontSize: 10, color: darkGoldColor, fontWeight: pw.FontWeight.bold),
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    color: darkGoldColor,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
                 ),
               ),
               pw.SizedBox(height: 4),
               pw.Center(
                 child: pw.Text(
                   'Website: https://nailauraofficial.com | Contact: +91 8281791180',
-                  style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
+                  style: const pw.TextStyle(
+                    fontSize: 8,
+                    color: PdfColors.grey600,
+                  ),
                 ),
               ),
             ],
@@ -354,18 +530,28 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.receipt_long_outlined, color: AppTheme.primaryGold, size: 48),
+                      const Icon(
+                        Icons.receipt_long_outlined,
+                        color: AppTheme.primaryGold,
+                        size: 48,
+                      ),
                       const SizedBox(height: 16),
                       Text(
                         _loadError!,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.montserrat(color: Colors.white, fontSize: 16),
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Contact the studio on +91 8281791180 for a copy.',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.montserrat(color: Colors.white.withValues(alpha: 0.6), fontSize: 13),
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontSize: 13,
+                        ),
                       ),
                     ],
                   ),
@@ -399,6 +585,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                   _buildInvoiceCard(),
                   const SizedBox(height: 16),
 
+                  if (_p['loyaltyCard'] != null) ...[
+                    _buildLoyaltyCard(isMobile),
+                    const SizedBox(height: 16),
+                  ],
+
                   // 5. Terms & Policy Notes
                   _buildTermsCard(),
                   const SizedBox(height: 20),
@@ -414,8 +605,6 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
       ),
     );
   }
-
-
 
   Widget _buildHeaderCard() {
     return Container(
@@ -479,7 +668,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const Icon(Icons.arrow_forward_ios, color: AppTheme.primaryGold, size: 10),
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    color: AppTheme.primaryGold,
+                    size: 10,
+                  ),
                 ],
               ),
             ),
@@ -519,7 +712,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.favorite, color: AppTheme.primaryGold, size: 18),
+                  const Icon(
+                    Icons.favorite,
+                    color: AppTheme.primaryGold,
+                    size: 18,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     "Thank you for rating your Nailaura experience! 💖",
@@ -538,7 +735,12 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               children: [
                 _buildSmileyOption(0, "😄", "Most Likely", Colors.greenAccent),
                 _buildSmileyOption(1, "😐", "Probably", Colors.amberAccent),
-                _buildSmileyOption(2, "🙁", "Least Likely", Colors.orangeAccent),
+                _buildSmileyOption(
+                  2,
+                  "🙁",
+                  "Least Likely",
+                  Colors.orangeAccent,
+                ),
               ],
             ),
         ],
@@ -546,7 +748,12 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     );
   }
 
-  Widget _buildSmileyOption(int index, String emoji, String label, Color accent) {
+  Widget _buildSmileyOption(
+    int index,
+    String emoji,
+    String label,
+    Color accent,
+  ) {
     final isSelected = _selectedRating == index;
 
     return InkWell(
@@ -565,22 +772,25 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isSelected ? accent.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.05),
+                color: isSelected
+                    ? accent.withValues(alpha: 0.2)
+                    : Colors.white.withValues(alpha: 0.05),
                 border: Border.all(
-                  color: isSelected ? accent : Colors.white.withValues(alpha: 0.1),
+                  color: isSelected
+                      ? accent
+                      : Colors.white.withValues(alpha: 0.1),
                   width: isSelected ? 2 : 1,
                 ),
               ),
-              child: Text(
-                emoji,
-                style: const TextStyle(fontSize: 26),
-              ),
+              child: Text(emoji, style: const TextStyle(fontSize: 26)),
             ),
             const SizedBox(height: 8),
             Text(
               label,
               style: GoogleFonts.montserrat(
-                color: isSelected ? accent : Colors.white.withValues(alpha: 0.8),
+                color: isSelected
+                    ? accent
+                    : Colors.white.withValues(alpha: 0.8),
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
               ),
@@ -681,7 +891,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 flex: 3,
                 child: Text(
                   "Item Description",
-                  style: GoogleFonts.montserrat(color: Colors.black, fontSize: 11, fontWeight: FontWeight.w700),
+                  style: GoogleFonts.montserrat(
+                    color: Colors.black,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               Expanded(
@@ -689,7 +903,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 child: Text(
                   "Qty",
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(color: Colors.black, fontSize: 11, fontWeight: FontWeight.w700),
+                  style: GoogleFonts.montserrat(
+                    color: Colors.black,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               Expanded(
@@ -697,7 +915,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 child: Text(
                   "Net Amount",
                   textAlign: TextAlign.right,
-                  style: GoogleFonts.montserrat(color: Colors.black, fontSize: 11, fontWeight: FontWeight.w700),
+                  style: GoogleFonts.montserrat(
+                    color: Colors.black,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ],
@@ -717,7 +939,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                     flex: 3,
                     child: Text(
                       item['name'] ?? '',
-                      style: GoogleFonts.montserrat(color: Colors.black87, fontSize: 12, fontWeight: FontWeight.w600),
+                      style: GoogleFonts.montserrat(
+                        color: Colors.black87,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   Expanded(
@@ -725,7 +951,10 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                     child: Text(
                       "1",
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(color: Colors.black87, fontSize: 12),
+                      style: GoogleFonts.montserrat(
+                        color: Colors.black87,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                   Expanded(
@@ -733,7 +962,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                     child: Text(
                       "₹${item['price']}",
                       textAlign: TextAlign.right,
-                      style: GoogleFonts.montserrat(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w700),
+                      style: GoogleFonts.montserrat(
+                        color: Colors.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ],
@@ -768,16 +1001,28 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 children: [
                   Text(
                     "TOTAL AMOUNT",
-                    style: GoogleFonts.montserrat(color: Colors.black54, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1.2),
+                    style: GoogleFonts.montserrat(
+                      color: Colors.black54,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.2,
+                    ),
                   ),
                   Text(
                     "₹${totalAmount.toStringAsFixed(2)}",
-                    style: GoogleFonts.montserrat(color: Colors.black, fontSize: 22, fontWeight: FontWeight.w800),
+                    style: GoogleFonts.montserrat(
+                      color: Colors.black,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFE8F5E9),
                   borderRadius: BorderRadius.circular(20),
@@ -785,7 +1030,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.check_circle, color: Color(0xFF2E7D32), size: 16),
+                    const Icon(
+                      Icons.check_circle,
+                      color: Color(0xFF2E7D32),
+                      size: 16,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       "PAYMENT PAID",
@@ -823,7 +1072,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 const SizedBox(height: 10),
                 Text(
                   "Need help? Reach us at +91 8281791180",
-                  style: GoogleFonts.montserrat(color: Colors.black54, fontSize: 11, fontWeight: FontWeight.w500),
+                  style: GoogleFonts.montserrat(
+                    color: Colors.black54,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
@@ -833,15 +1086,34 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     );
   }
 
-  Widget _buildMetaRow(String label1, String value1, String label2, String value2) {
+  Widget _buildMetaRow(
+    String label1,
+    String value1,
+    String label2,
+    String value2,
+  ) {
     return Row(
       children: [
         Expanded(
           child: RichText(
             text: TextSpan(
               children: [
-                TextSpan(text: "$label1 ", style: GoogleFonts.montserrat(color: Colors.black54, fontSize: 11, fontWeight: FontWeight.w600)),
-                TextSpan(text: value1, style: GoogleFonts.montserrat(color: Colors.black, fontSize: 11, fontWeight: FontWeight.w700)),
+                TextSpan(
+                  text: "$label1 ",
+                  style: GoogleFonts.montserrat(
+                    color: Colors.black54,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                TextSpan(
+                  text: value1,
+                  style: GoogleFonts.montserrat(
+                    color: Colors.black,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ],
             ),
           ),
@@ -851,8 +1123,22 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
             textAlign: TextAlign.right,
             text: TextSpan(
               children: [
-                TextSpan(text: "$label2 ", style: GoogleFonts.montserrat(color: Colors.black54, fontSize: 11, fontWeight: FontWeight.w600)),
-                TextSpan(text: value2, style: GoogleFonts.montserrat(color: Colors.black, fontSize: 11, fontWeight: FontWeight.w700)),
+                TextSpan(
+                  text: "$label2 ",
+                  style: GoogleFonts.montserrat(
+                    color: Colors.black54,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                TextSpan(
+                  text: value2,
+                  style: GoogleFonts.montserrat(
+                    color: Colors.black,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ],
             ),
           ),
@@ -865,8 +1151,22 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: GoogleFonts.montserrat(color: Colors.black87, fontSize: 12, fontWeight: FontWeight.w500)),
-        Text(value, style: GoogleFonts.montserrat(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w600)),
+        Text(
+          label,
+          style: GoogleFonts.montserrat(
+            color: Colors.black87,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        Text(
+          value,
+          style: GoogleFonts.montserrat(
+            color: Colors.black,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ],
     );
   }
@@ -918,6 +1218,94 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     );
   }
 
+  final _cardKey = GlobalKey();
+
+  /// Downloads the Aura card as a PNG.
+  Future<void> _saveCardImage() async {
+    final boundary =
+        _cardKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+    if (boundary == null) return;
+    final image = await boundary.toImage(pixelRatio: 3);
+    final data = await image.toByteData(format: ui.ImageByteFormat.png);
+    if (data == null) return;
+    final blob = web.Blob(
+      <JSAny>[data.buffer.asUint8List().toJS].toJS,
+      web.BlobPropertyBag(type: 'image/png'),
+    );
+    final url = web.URL.createObjectURL(blob);
+    web.HTMLAnchorElement()
+      ..href = url
+      ..download = 'Nailaura_Aura_Card_$invoiceNumber.png'
+      ..click();
+    web.URL.revokeObjectURL(url);
+  }
+
+  Widget _buildLoyaltyCard(bool isMobile) {
+    final card = int.tryParse(_p['loyaltyCard'] ?? '') ?? 1;
+    final filled = int.tryParse(_p['loyaltyFilled'] ?? '') ?? 0;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF171719),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      ),
+      child: Column(
+        children: [
+          Text(
+            'YOUR AURA LOYALTY CARD',
+            style: GoogleFonts.montserrat(
+              color: AppTheme.primaryGold,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 2,
+            ),
+          ),
+          const SizedBox(height: 16),
+          LayoutBuilder(
+            builder: (context, c) => RepaintBoundary(
+              key: _cardKey,
+              child: LoyaltyCardView(
+                tier: LoyaltyTier.forCard(card),
+                cardNumber: card,
+                filled: filled,
+                customerName: customerName,
+                width: c.maxWidth > 440 ? 440 : c.maxWidth,
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            Loyalty.message(card, filled),
+            textAlign: TextAlign.center,
+            style: GoogleFonts.montserrat(
+              color: Colors.white.withValues(alpha: 0.75),
+              fontSize: 13,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 14),
+          TextButton.icon(
+            onPressed: _saveCardImage,
+            icon: const Icon(
+              Icons.download_rounded,
+              size: 18,
+              color: AppTheme.primaryGold,
+            ),
+            label: Text(
+              'Save card',
+              style: GoogleFonts.montserrat(
+                color: AppTheme.primaryGold,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTermsCard() {
     return Container(
       width: double.infinity,
@@ -932,23 +1320,35 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
         children: [
           Row(
             children: [
-              const Icon(Icons.verified_outlined, color: AppTheme.primaryGold, size: 18),
+              const Icon(
+                Icons.verified_outlined,
+                color: AppTheme.primaryGold,
+                size: 18,
+              ),
               const SizedBox(width: 8),
-              Text(
-                "15-DAY SERVICE WARRANTY & POLICY",
-                style: GoogleFonts.montserrat(
-                  color: AppTheme.primaryGold,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.5,
+              Expanded(
+                child: Text(
+                  "15-DAY SERVICE WARRANTY & POLICY",
+                  style: GoogleFonts.montserrat(
+                    color: AppTheme.primaryGold,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.5,
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          _buildBulletPoint("We provide an exclusive 15-day service warranty on gel extensions and structured nail art."),
-          _buildBulletPoint("Please retain this digital receipt for touch-ups or warranty inquiries within 15 days."),
-          _buildBulletPoint("Services performed are non-refundable after service completion."),
+          _buildBulletPoint(
+            "We provide an exclusive 15-day service warranty on gel extensions and structured nail art.",
+          ),
+          _buildBulletPoint(
+            "Please retain this digital receipt for touch-ups or warranty inquiries within 15 days.",
+          ),
+          _buildBulletPoint(
+            "Services performed are non-refundable after service completion.",
+          ),
         ],
       ),
     );
@@ -960,7 +1360,13 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("• ", style: TextStyle(color: AppTheme.primaryGold.withValues(alpha: 0.8), fontSize: 14)),
+          Text(
+            "• ",
+            style: TextStyle(
+              color: AppTheme.primaryGold.withValues(alpha: 0.8),
+              fontSize: 14,
+            ),
+          ),
           Expanded(
             child: Text(
               text,
@@ -987,13 +1393,18 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryGold,
               foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
               elevation: 4,
             ),
             icon: const Icon(Icons.download, size: 20),
             label: Text(
               "Download Bill (PDF)",
-              style: GoogleFonts.montserrat(fontSize: 15, fontWeight: FontWeight.w700),
+              style: GoogleFonts.montserrat(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),
@@ -1004,17 +1415,27 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               child: OutlinedButton.icon(
                 onPressed: () async {
                   final text = "Check out my Nailaura receipt: $shareLink";
-                  final url = Uri.parse("https://wa.me/?text=${Uri.encodeComponent(text)}");
+                  final url = Uri.parse(
+                    "https://wa.me/?text=${Uri.encodeComponent(text)}",
+                  );
                   if (await canLaunchUrl(url)) launchUrl(url);
                 },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.white,
                   side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 icon: const Icon(Icons.share, size: 18),
-                label: Text("Share Link", style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w600)),
+                label: Text(
+                  "Share Link",
+                  style: GoogleFonts.montserrat(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
             const SizedBox(width: 12),
@@ -1026,12 +1447,22 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppTheme.primaryGold,
-                  side: BorderSide(color: AppTheme.primaryGold.withValues(alpha: 0.4)),
+                  side: BorderSide(
+                    color: AppTheme.primaryGold.withValues(alpha: 0.4),
+                  ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 icon: const Icon(Icons.language, size: 18),
-                label: Text("Main Website", style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w600)),
+                label: Text(
+                  "Main Website",
+                  style: GoogleFonts.montserrat(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
           ],

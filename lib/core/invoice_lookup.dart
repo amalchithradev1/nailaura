@@ -41,6 +41,17 @@ class InvoiceLookup {
       'subtotal': (fields.containsKey('subtotal') ? _num(fields['subtotal']) : total).toStringAsFixed(2),
       'discount': _num(fields['discount']).toStringAsFixed(2),
       'payment': _str(fields['paymentMethod']),
+      ..._loyalty(fields['loyalty']),
+    };
+  }
+
+  /// Aura card state saved on the invoice (empty for older invoices).
+  static Map<String, String> _loyalty(dynamic v) {
+    final f = v?['mapValue']?['fields'];
+    if (f is! Map) return const {};
+    return {
+      'loyaltyCard': _num(f['card']).toInt().toString(),
+      'loyaltyFilled': _num(f['filled']).toInt().toString(),
     };
   }
 
