@@ -1246,7 +1246,12 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
           ),
           const SizedBox(height: 14),
           Text(
-            Loyalty.message(card, filled),
+            loyaltyMessage(
+              card: card,
+              filled: filled,
+              completed: _p['loyaltyCompleted'] == 'true',
+              percent: double.tryParse(_p['loyaltyPercent'] ?? '') ?? 0,
+            ),
             textAlign: TextAlign.center,
             style: GoogleFonts.montserrat(
               color: Colors.white.withValues(alpha: 0.75),
