@@ -52,6 +52,7 @@ class InvoiceLookup {
     return {
       'loyaltyCard': _num(f['card']).toInt().toString(),
       'loyaltyFilled': _num(f['filled']).toInt().toString(),
+      if (_str(f['cardNumber']).isNotEmpty) 'loyaltyNumber': _str(f['cardNumber']),
     };
   }
 

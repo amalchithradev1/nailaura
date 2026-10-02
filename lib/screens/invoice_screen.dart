@@ -1240,6 +1240,9 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     web.URL.revokeObjectURL(url);
   }
 
+  String? _formatCardNo(String? n) =>
+      n == null || n.length != 10 ? n : '${n.substring(0, 4)} ${n.substring(4, 7)} ${n.substring(7)}';
+
   Widget _buildLoyaltyCard(bool isMobile) {
     final card = int.tryParse(_p['loyaltyCard'] ?? '') ?? 1;
     final filled = int.tryParse(_p['loyaltyFilled'] ?? '') ?? 0;
@@ -1269,6 +1272,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               child: LoyaltyCardView(
                 tier: LoyaltyTier.forCard(card),
                 cardNumber: card,
+                numberLabel: _formatCardNo(_p['loyaltyNumber']),
                 filled: filled,
                 customerName: customerName,
                 width: c.maxWidth > 440 ? 440 : c.maxWidth,

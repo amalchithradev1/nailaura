@@ -40,6 +40,9 @@ class LoyaltyCardView extends StatelessWidget {
   final LoyaltyTier tier;
   final int cardNumber;
 
+  /// Printed card number, shown instead of "CARD 01" when known.
+  final String? numberLabel;
+
   /// Slots ticked: 0..5 stamps, 6 = the free visit has been used.
   final int filled;
   final String? customerName;
@@ -52,6 +55,7 @@ class LoyaltyCardView extends StatelessWidget {
     super.key,
     required this.tier,
     required this.cardNumber,
+    this.numberLabel,
     required this.filled,
     this.customerName,
     this.width = 420,
@@ -107,7 +111,7 @@ class LoyaltyCardView extends StatelessWidget {
                     tier.label.toUpperCase(),
                     GoogleFonts.plusJakartaSans(fontSize: 13 * scale, fontWeight: FontWeight.w800, letterSpacing: 2),
                   ),
-                  Text('CARD ${cardNumber.toString().padLeft(2, '0')}',
+                  Text(numberLabel != null ? 'NO. $numberLabel' : 'CARD ${cardNumber.toString().padLeft(2, '0')}',
                       style: GoogleFonts.plusJakartaSans(
                           fontSize: 9 * scale, color: Colors.white54, letterSpacing: 1.5, fontWeight: FontWeight.w600)),
                 ],
