@@ -1055,21 +1055,9 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
           _buildDashedLine(),
           const SizedBox(height: 20),
 
-          // Barcode Display
           Center(
             child: Column(
               children: [
-                _buildBarcodeWidget(invoiceNumber),
-                const SizedBox(height: 6),
-                Text(
-                  "-$invoiceNumber-",
-                  style: GoogleFonts.orbitron(
-                    color: Colors.black54,
-                    fontSize: 12,
-                    letterSpacing: 2.0,
-                  ),
-                ),
-                const SizedBox(height: 10),
                 Text(
                   "Need help? Reach us at +91 8281791180",
                   style: GoogleFonts.montserrat(
@@ -1192,29 +1180,6 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
           }),
         );
       },
-    );
-  }
-
-  Widget _buildBarcodeWidget(String code) {
-    return Container(
-      height: 48,
-      width: 220,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: Colors.black12),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: List.generate(35, (index) {
-          final isThick = index % 3 == 0 || index % 7 == 0;
-          return Container(
-            width: isThick ? 3.5 : 1.5,
-            color: index % 5 == 4 ? Colors.transparent : Colors.black87,
-          );
-        }),
-      ),
     );
   }
 
