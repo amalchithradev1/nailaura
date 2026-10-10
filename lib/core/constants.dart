@@ -25,6 +25,15 @@ class AppConstants {
 
   // Portfolio (add new nail art photos here)
   static const List<String> portfolio = [
+    'assets/images/work_11.jpg',
+    'assets/images/work_12.jpg',
+    'assets/images/work_13.jpg',
+    'assets/images/work_14.jpg',
+    'assets/images/work_15.jpg',
+    'assets/images/work_16.jpg',
+    'assets/images/work_17.jpg',
+    'assets/images/work_18.jpg',
+    'assets/images/work_19.jpg',
     'assets/images/work_01.jpg',
     'assets/images/work_02.jpg',
     'assets/images/work_03.jpg',
